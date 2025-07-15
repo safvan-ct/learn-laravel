@@ -1,0 +1,42 @@
+body {
+    background-color: #f8f9fa;
+}
+
+.section {
+    margin-top: 2rem;
+}
+
+.section h2 {
+    border-bottom: 2px solid #dee2e6;
+    padding-bottom: 0.5rem;
+}
+
+pre {
+    background-color: #f1f1f1;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    color: var(--bs-code-color);
+}
+
+.accordion-button::after {
+    transform: scale(1.3);
+}
+
+li {
+    margin-bottom: 0.5rem;
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+    border-color: transparent;
+    outline: none;
+}
+
+.accordion-button:not(.collapsed) {
+    box-shadow: none;
+    border-color: transparent;
+}
+
+.active {
+    color: #007bff !important;
+}

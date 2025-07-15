@@ -7,68 +7,34 @@
     <title>Model & DB</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-
-        .section {
-            margin-top: 2rem;
-        }
-
-        .section h2 {
-            border-bottom: 2px solid #dee2e6;
-            padding-bottom: 0.5rem;
-        }
-
-        pre {
-            background-color: #f1f1f1;
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            color: var(--bs-code-color);
-        }
-
-        .accordion-button::after {
-            transform: scale(1.3);
-        }
-
-        li {
-            margin-bottom: 0.5rem;
-        }
-
-        .accordion-button:focus {
-            box-shadow: none;
-            border-color: transparent;
-            outline: none;
-        }
-
-        .accordion-button:not(.collapsed) {
-            box-shadow: none;
-            border-color: transparent;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body class="bg-light text-dark">
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
         <div class="container">
-            <a class="navbar-brand text-primary fw-bold" href="#">Laravel Guide</a>
+            <a class="navbar-brand text-primary fw-bold" href="index.html">Learn Laravel</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link active" href="model-db.html">Model & DB</a></li>
-                    <li class="nav-item"><a class="nav-link" href="model-db-qa.html">Model & DB - Q&A</a></li>
+                    <li class="nav-item active"><a class="nav-link active" href="model-db.html">Model & DB</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
     <div class="container py-4">
-        <h1 class="text-center mb-5">📘 Laravel Eloquent & DB Essentials</h1>
+        <h1 class="text-center mb-2"><i class="fas fa-book-open text-primary me-2"></i> Laravel Eloquent & DB Essentials</h1>
+
+        <div class="text-center mb-4">
+            <a href="model-db-qa.html" class="btn btn-primary btn-lg">
+                <i class="fas fa-question-circle me-2"></i> Questions & Answers
+            </a>
+        </div>
+
 
         <!-- Search -->
         <input type="search" id="search" class="form-control mb-4 search-input"
