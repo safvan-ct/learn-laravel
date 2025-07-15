@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model & DB</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .section {
+            margin-top: 2rem;
+        }
+
+        .section h2 {
+            border-bottom: 2px solid #dee2e6;
+            padding-bottom: 0.5rem;
+        }
+
+        pre {
+            background-color: #f1f1f1;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            color: var(--bs-code-color);
+        }
+
+        .accordion-button::after {
+            transform: scale(1.3);
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        .accordion-button:focus {
+            box-shadow: none;
+            border-color: transparent;
+            outline: none;
+        }
+
+        .accordion-button:not(.collapsed) {
+            box-shadow: none;
+            border-color: transparent;
+        }
+    </style>
+</head>
+
+<body class="bg-light text-dark">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+        <div class="container">
+            <a class="navbar-brand text-primary fw-bold" href="#">Laravel Guide</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link active" href="model-db.html">Model & DB</a></li>
+                    <li class="nav-item"><a class="nav-link" href="model-db-qa.html">Model & DB - Q&A</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-4">
+        <h1 class="text-center mb-5">📘 Laravel Eloquent & DB Essentials</h1>
+
+        <!-- Search -->
+        <input type="search" id="search" class="form-control mb-4 search-input"
+            placeholder="Search topics or keywords..." aria-label="Search">
+
+        <!-- Section Template -->
+        <div class="accordion" id="eloquentAccordion">
+            <!-- Eloquent Basics -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingOne">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseOne">
+                        <strong>01</strong>&nbsp; Eloquent Model Basics
+                    </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#eloquentAccordion">
+                    <div class="accordion-body">
+                        <h6>1.1 Model Creation</h6>
+                        <p>Each Eloquent model corresponds to a database table. </p>
+                        <pre><code>php artisan make:model ModelName</code></pre>
+
+                        <h6>1.2 $fillable & $guarded</h6>
+                        <ul>
+                            <li>
+                                <strong>$fillable:</strong>
+                                <p>Specifies which fields are mass assignable. Used to whitelist attributes for bulk
+                                    assignment (e.g., Model::create()).</p>
+                                <pre><code>protected $fillable = ['name', 'price', 'description'];</code></pre>
+                            </li>
+                            <li>
+                                <strong>$guarded:</strong>
+                                <p>Specifies which fields are not mass assignable. Used to blacklist attributes.</p>
+                                <pre><code>protected $guarded = ['id'];</code></pre>
+                            </li>
+                        </ul>
+
+                        <h6>1.3 Custom Table Settings</h6>
+                        <pre><code>protected $table = 'my_products';
+protected $primaryKey = 'product_id';
+public $incrementing = false;
+protected $keyType = 'string'; // Data type of primary key</code></pre>
+
+
+                        <h6>1.4 Timestamps & Soft Deletes</h6>
+                        <ul>
+                            <li>
+                                <strong>Timestamps:</strong>
+                                <p>Eloquent automatically maintains created_at and updated_at fields. They are updated
+                                    on create and update actions respectively.</p>
+                                <pre><code>public $timestamps = false;</code></pre>
+                            </li>
+
+                            <li>
+                                <strong>Soft Deletes:</strong>
+                                <p>Allows "deleting" a record without actually removing it from the database.</p>
+                                <pre><code>use Illuminate\Database\Eloquent\SoftDeletes;</code></pre>
+                            </li>
+                        </ul>
+
+                        <h6>1.5 UUIDs and Custom Keys</h6>
+                        <ul>
+                            <li>Use UUIDs instead of auto-increment IDs.</li>
+                            <pre><code>use Illuminate\Support\Str;
+
+protected static function boot()
+{
+    parent::boot();
+    static::creating(fn ($model) => $model->id = (string) Str::uuid());
+}</code></pre>
+                            <li>Set custom key:
+                                <pre><code>protected $keyType = 'string';
+public $incrementing = false;</code></pre>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accessors & Mutators -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTwo">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseTwo">
+                        <strong>02</strong>&nbsp; Accessors & Mutators
+                    </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#eloquentAccordion">
+                    <div class="accordion-body">
+                        <h6>2.1 Accessors</h6>
+                        <p>Format or modify attribute values when reading from the model. Use method:
+                            <code>getAttributeNameAttribute()</code>
+                        </p>
+
+                        <h6>2.2 Mutators</h6>
+                        <p>Format or transform data before saving it to the database. Use method:
+                            <code>setAttributeNameAttribute()</code>
+                        </p>
+
+                        <h6>2.3 Unified Accessor/Mutator with <code>Attribute::make()</code></h6>
+                        <p>Modern way to define both in one method:</p>
+                        <pre><code>use Illuminate\Database\Eloquent\Casts\Attribute;
+
+protected function name(): Attribute 
+{
+    return Attribute::make(
+        get: fn ($value) => ucfirst($value),
+        set: fn ($value) => strtolower($value),
+    );
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Attribute Casting -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingThree">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseThree">
+                        <strong>03</strong>&nbsp; Attribute Casting
+                    </button>
+                </h2>
+                <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#eloquentAccordion">
+                    <div class="accordion-body">
+                        <ul>
+                            <li style="list-style: none;">
+                                <ul>
+                                    <li><strong>Attribute cast</strong> automatically converts model attributes to
+                                        desired types
+                                        when accessing or setting them.</li>
+                                    <li>Applies casts both when <strong>getting</strong> and <strong>setting</strong>
+                                        attributes.</li>
+                                    <li>Laravel runs mutators <strong>after</strong> casting for get, and
+                                        <strong>before</strong> for set.
+                                    </li>
+                                </ul>
+                                <pre><code>protected $casts = [
+    'name' => 'string',
+    'is_admin' => 'boolean',
+];
+</code></pre>
+                            </li>
+                        </ul>
+
+                        <h6>3.1 Primitive Casts</h6>
+                        <ul>
+                            <li>
+                                <p>
+                                    Used for basic data types like <code>int</code>, <code>string</code>,
+                                    <code>bool</code>, etc.
+                                </p>
+                            </li>
+                        </ul>
+
+                        <h6>3.2 Date casting</h6>
+                        <ul>
+                            <li>
+                                <p>Casts date/time fields into <code>Carbon</code> instances automatically.</p>
+                            </li>
+                        </ul>
+
+                        <h6>3.3 JSON Casts</h6>
+                        <ul>
+                            <li>
+                                <p>Automatically converts JSON columns into PHP arrays or objects.</p>
+                            </li>
+                        </ul>
+
+                        <h6>3.4 Enum Casts</h6>
+                        <ul>
+                            <li>
+                                <p>Useful for type-safe <code>status</code> or <code>role</code> columns using PHP
+                                    Enums.</p>
+                            </li>
+                        </ul>
+
+                        <h6>3.5 Custom Casts (via CastsAttributes):</h6>
+                        <pre><code>php artisan make:cast CastName</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Eloquent Relationships -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingFour">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseFour">
+                        <strong>04</strong>&nbsp; Eloquent Relationships
+                    </button>
+                </h2>
+                <div id="collapseFour" class="accordion-collapse collapse" data-bs-parent="#eloquentAccordion">
+                    <div class="accordion-body">
+                        <h6>4.1 One to One (hasOne, belongsTo)</h6>
+                        <ul>
+                            <li>Use <code>hasOne()</code> in the parent model (e.g., User hasOne Profile).</li>
+                            <li>Use <code>belongsTo()</code> in the child model (Profile belongsTo User).</li>
+                        </ul>
+
+                        <h6>4.2 One to Many (hasMany, belongsTo)</h6>
+                        <ul>
+                            <li>Use <code>hasMany()</code> when a record has multiple related rows (e.g., Post hasMany
+                                Comments).</li>
+                            <li>Use <code>belongsTo()</code> for the inverse relationship (e.g., Each Post belongs to
+                                one User).</li>
+                        </ul>
+
+                        <h6>4.3 Many to Many (belongsToMany)</h6>
+                        <ul>
+                            <li>A User can have many Roles, and each Role can be assigned to many Users.</li>
+                            <li>Pivot table: <code>role_user</code> (alphabetical order).</li>
+                            <li>No Eloquent model required for pivot table (optional).</li>
+                            <li>Common methods:
+                                <ul>
+                                    <li><code>attach()</code>: Attach roles</li>
+                                    <li><code>detach()</code>: Detach roles</li>
+                                    <li><code>sync()</code>: Attach new, remove others</li>
+                                    <li><code>toggle()</code>: Attach if not present, detach if exists</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                        <h6>4.4 Has Many Through (hasManyThrough)</h6>
+                        <ul>
+                            <li>Access a relation through an intermediate model.</li>
+                        </ul>
+
+                        <h6>4.5 Eager Loading (with, load, loadMissing)</h6>
+                        <ul>
+                            <li>Prevents N+1 query problem.</li>
+                            <li>Supports nested relationships: <code>User::with('posts.comments')->get()</code></li>
+
+                            <li><code>with()</code> loads relationships with the initial query:
+                                <code>$users = User::with('posts')->get();</code>
+                            </li>
+
+                            <li><code>load()</code> can be used on an already retrieved model:
+                                <code>$user->load('posts')</code>
+                                <p>Always triggers additional queries, even if the relationship was already loaded</p>
+                                <p>If you call load() again, it’ll re-fetch even if already loaded</p>
+                            </li>
+
+                            <li><code>loadMissing()</code> similar to load() but only loads relationships that were not
+                                already loaded:
+                                <code>$users->loadMissing('posts');</code>
+                                <br><i>Prevents re-loading if posts was already loaded before.</i>
+                                <p>Only triggers a query if the relationship hasn’t already been loaded.</p>
+                                <p>More efficient if you're not sure whether a relationship is already loaded.</p>
+                            </li>
+
+                            <li>Constraining Eager Loads / Scoped loading:
+                                <p>Apply conditions when eager loading.</p>
+                                <pre><code>$users = User::with(['posts' => function ($query) {
+    $query->where('is_published', true);
+}])->get();</code></pre>
+                            </li>
+                        </ul>
+
+                        <h6>4.6 withCount()</h6>
+                        <ul>
+                            <li><code>User::withCount('posts')->get()</code></li>
+                            <li>Adds a <code>posts_count</code> column to the result.</li>
+                            <li>Useful for counts without loading the actual relationship.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Polymorphic Relationships -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingFive">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseFive">
+                        <strong>05</strong>&nbsp; Polymorphic Relationships
+                    </button>
+                </h2>
+                <div id="collapseFive" class="accordion-collapse collapse" data-bs-parent="#eloquentAccordion">
+                    <div class="accordion-body">
+                        <ul>
+                            <li>Polymorphic relationships allow a model to belong to more than one other model on a
+                                single association.</li>
+                            <li>A <code>Comment</code> model that can belong to both <code>Post</code> and
+                                <code>Video</code>.
+                            </li>
+                            <li><code>$table->morphs('commentable');</code> — creates <code>commentable_id</code> and
+                                <code>commentable_type</code> columns.
+                            </li>
+                        </ul>
+
+                        <h6>5.1 morphOne / morphMany</h6>
+                        <ul>
+                            <li><code>morphOne</code> — One-to-One Polymorphic: A model has one related model.</li>
+                            <li><code>morphMany</code> — One-to-Many Polymorphic: A model can have many related models.
+                            </li>
+                        </ul>
+
+                        <h6>5.2 Many-to-Many Polymorphic Relationships</h6>
+                        <ul>
+                            <li>Use <code>morphedByMany</code> and <code>morphToMany</code>.</li>
+                            <li>Example: A <code>Tag</code> can belong to multiple <code>Posts</code> or
+                                <code>Videos</code>.
+                            </li>
+                        </ul>
+
+                        <h6>5.3 Pivot Table Extras (withPivot, using)</h6>
+                        <ul>
+                            <li><code>withPivot</code> — Fetch additional columns from the pivot table.</li>
+                            <li><code>using(...)</code> — Define a custom pivot model.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advanced Relationship Techniques -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingSix">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseSix">
+                        <strong>06</strong>&nbsp; Advanced Relationship Techniques
+                    </button>
+                </h2>
+                <div id="collapseSix" class="accordion-collapse collapse" data-bs-parent="#eloquentAccordion">
+                    <div class="accordion-body">
+                        <ul>
+                            <li><strong>Dynamic Relationships</strong>: Define relationships at runtime using
+                                <code>resolveRelationUsing()</code>. Useful in packages or reusable traits.
+                                <pre><code>User::resolveRelationUsing('posts', function ($userModel) {
+    return $userModel->hasMany(Post::class);
+});</code></pre>
+                            </li>
+
+                            <li><strong>Relationship Aggregates (withCount, withSum, etc.)</strong>: Eager load
+                                aggregate data to improve performance.
+                                <pre><code>// withCount
+$users = User::withCount('posts')->get();
+
+// withSum
+$users = User::withSum('orders as total_spent', 'amount');
+
+// withMax / withMin / withAvg also supported</code></pre>
+                            </li>
+
+                            <li><strong>Touching Parent Timestamps</strong>: Update parent’s <code>updated_at</code>
+                                when child is updated using <code>$touches</code>.
+                                <pre><code>class Comment extends Model {
+    protected $touches = ['post'];
+}</code></pre>
+                                Useful for syncing timestamps or cache invalidation.
+                            </li>
+
+                            <li><strong>Custom Pivot Models</strong>: Use when you need extra fields or logic in pivot
+                                tables.
+                                <pre><code>class Membership extends Pivot {
+    // Custom logic
+}
+
+class User extends Model {
+    public function teams() {
+        return $this->belongsToMany(Team::class)
+                    ->using(Membership::class)
+                    ->withPivot('role', 'joined_at');
+    }
+}</code></pre>
+                            </li>
+
+                            <li><strong>Querying Relationship Existence</strong>: Filter models based on relationship
+                                existence or conditions.
+                                <ul>
+                                    <li><code>has()</code> — Check if related models exist.
+                                        <pre><code>User::has('posts')->get();</code></pre>
+                                    </li>
+                                    <li><code>whereHas()</code> — Add conditions to related models.
+                                        <pre><code>User::whereHas('posts', function ($q) {
+    $q->where('title', 'like', 'Laravel%');
+})->get();</code></pre>
+                                    </li>
+                                    <li><code>doesntHave()</code> / <code>orWhereDoesntHave()</code> — Inverse of
+                                        <code>has()</code>.
+                                        <pre><code>User::doesntHave('posts')->get();</code></pre>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Query Builder Basics -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingSix">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseSeven">
+                        <strong>07</strong>&nbsp; Query Builder Basics
+                    </button>
+                </h2>
+                <div id="collapseSeven" class="accordion-collapse collapse" data-bs-parent="#eloquentAccordion">
+                    <div class="accordion-body">
+                        <p>
+                            Laravel’s Query Builder provides a convenient, fluent interface to create and run database
+                            queries. It works on all supported databases and allows building complex SQL queries
+                            programmatically.
+                        </p>
+
+                        <h6>6.1 Where Clauses</h6>
+                        <pre><code>DB::table('users')->where('status', 'active')->get();</code></pre>
+
+                        <h6>6.2 Joins</h6>
+                        <ul>
+                            <li><code>join</code> (inner join)</li>
+                            <li><code>leftJoin</code></li>
+                            <li><code>rightJoin</code></li>
+                            <li><code>crossJoin</code></li>
+                        </ul>
+
+                        <h6>6.3 Subqueries</h6>
+                        <p>Subqueries can be used in <code>select</code>, <code>where</code>, and <code>join</code>
+                            clauses.</p>
+
+                        <h6>6.4 Aggregates</h6>
+                        <ul>
+                            <li><code>count()</code></li>
+                            <li><code>sum()</code></li>
+                            <li><code>avg()</code> / <code>average()</code></li>
+                            <li><code>min()</code></li>
+                            <li><code>max()</code></li>
+                        </ul>
+
+                        <h6>6.5 Pagination</h6>
+                        <ul>
+                            <li><code>paginate()</code> — Page-numbered pagination.</li>
+                            <li><code>cursorPaginate()</code> — Cursor-based (keyset) pagination:
+                                <ul>
+                                    <li>Efficient for large datasets.</li>
+                                    <li>No <code>count()</code> query — faster and less memory-intensive.</li>
+                                    <li>Uses "next" and "previous" cursors instead of page numbers.</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Model Events and Observers -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingSeven">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseEight">
+                        <strong>08</strong>&nbsp; Model Events and Observers
+                    </button>
+                </h2>
+                <div id="collapseEight" class="accordion-collapse collapse" data-bs-parent="#eloquentAccordion">
+                    <div class="accordion-body">
+                        <h6>7.1 Model Events</h6>
+                        <ul>
+                            <li>Laravel fires events during a model’s lifecycle.</li>
+                            <li>Handled in the model via static boot methods or via observers.</li>
+                            <li><code>retrieved</code> – After a model is retrieved from the database</li>
+                            <li><code>creating</code> – Before a model is created</li>
+                            <li><code>created</code> – After a model is created</li>
+                            <li><code>updating</code> – Before a model is updated</li>
+                            <li><code>updated</code> – After a model is updated</li>
+                            <li><code>saving</code> – Before a model is saved (creating or updating)</li>
+                            <li><code>saved</code> – After a model is saved</li>
+                            <li><code>deleting</code> – Before a model is deleted</li>
+                            <li><code>deleted</code> – After a model is deleted</li>
+                            <li><code>restoring</code> – Before a soft-deleted model is restored</li>
+                            <li><code>restored</code> – After a model is restored</li>
+                            <li><code>forceDeleted</code> – After a model is permanently deleted</li>
+                        </ul>
+
+                        <h6>7.2 Observer</h6>
+                        <ul>
+                            <li>Create an observer: <code>php artisan make:observer UserObserver --model=User</code>
+                            </li>
+                            <li>Register in <code>App\Providers\EventServiceProvider</code></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Database Transactions -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingEight">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseNine">
+                        <strong>09</strong>&nbsp; Database Transactions
+                    </button>
+                </h2>
+                <div id="collapseNine" class="accordion-collapse collapse" data-bs-parent="#eloquentAccordion">
+                    <div class="accordion-body">
+                        <p>Database transactions ensure data integrity by allowing you to execute a series of database
+                            operations as a single unit. If one operation fails, all others are rolled back.</p>
+
+                        <h6>8.1 Basic Transaction</h6>
+                        <ul>
+                            <li>Use the <code>DB::transaction()</code> helper to automatically commit or roll back.</li>
+                            <li>If an exception is thrown inside the closure, all queries are rolled back.</li>
+                            <li>If the closure executes successfully, all queries are committed.</li>
+                        </ul>
+
+                        <h6>8.2 Manual Transaction Control</h6>
+                        <p>Use when you need to log errors before rollback or handle errors in a custom way.</p>
+                        <pre><code>DB::beginTransaction();
+try {
+    // DB operations
+    DB::commit();
+} catch (\Exception $e) {
+    DB::rollBack();
+    throw $e;
+}</code></pre>
+
+                        <h6>8.3 Handling Deadlocks with Retry</h6>
+                        <p>Laravel retries transactions up to 1 time by default when a deadlock occurs.</p>
+                        <pre><code>DB::transaction(function () {
+    // operations
+}, $attempts = 3); // Retry 3 times on deadlock</code></pre>
+
+                        <h6>8.4 Nesting Transactions (Savepoints)</h6>
+                        <ul>
+                            <li>Nested transactions create savepoints.</li>
+                            <li>If the inner one fails, only the changes inside it are rolled back.</li>
+                        </ul>
+                        <pre><code>DB::transaction(function () {
+    // Outer transaction
+    DB::transaction(function () {
+        // Inner transaction (savepoint)
+    });
+});</code></pre>
+
+                        <ul>
+                            <li><code>DB::beginTransaction()</code> – Start a transaction.</li>
+                            <li><code>DB::commit()</code> – Commit (save) all the changes to the database.</li>
+                            <li><code>DB::rollBack()</code> – Undo (revert) all the changes since
+                                <code>beginTransaction()</code>.
+                            </li>
+                        </ul>
+
+                        <div class="alert alert-danger d-flex align-items-start" role="alert">
+                            <i class="fas fa-triangle-exclamation fa-lg me-2 mt-1 text-danger"></i>
+                            <div>
+                                <strong>Transaction Not Working as Expected!</strong><br>
+                                <ul class="mb-0">
+                                    <li><strong>MyISAM does not support transactions</strong> – all queries are
+                                        committed immediately, even inside <code>DB::transaction()</code>.</li>
+                                    <li>Use <strong>MySQL with InnoDB</strong> engine to enable proper transactional
+                                        behavior.</li>
+                                    <li>Tools like <code>Telescope</code>, <code>Horizon</code>, or
+                                        <code>Debugbar</code> might interfere with DB flow during local development.
+                                    </li>
+                                    <li>Some <strong>non-default DB drivers</strong> like
+                                        <code>SQLite (in-memory)</code> also do not support transactions fully.
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Database Locking -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingNine">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseTen">
+                        <strong>10</strong>&nbsp; Database Locking
+                    </button>
+                </h2>
+                <div id="collapseTen" class="accordion-collapse collapse" data-bs-parent="#eloquentAccordion">
+                    <div class="accordion-body">
+                        <p>✅ <strong>Database locking</strong> plays an essential role in managing concurrent access to
+                            the same records, especially in critical operations like <em>banking, inventory updates, and
+                                e-commerce carts</em>.</p>
+                        <p>✅ <strong>Always wrap locks in a transaction</strong> to ensure data consistency and avoid
+                            race conditions.</p>
+
+                        <h6>9.1 <code>lockForUpdate()</code> – Exclusive Lock (Write Lock)</h6>
+                        <ul>
+                            <li>Prevents others from reading or updating the row until your transaction completes.</li>
+                            <li>Ideal for sensitive operations like <strong>reducing inventory stock</strong> or
+                                <strong>processing payments</strong>.
+                            </li>
+                        </ul>
+                        <pre><code>DB::transaction(function () {
+    $product = DB::table('products')
+                ->where('id', 1)
+                ->lockForUpdate()
+                ->first();
+
+    // Update product stock
+    DB::table('products')
+        ->where('id', 1)
+        ->update(['stock' => $product->stock - 1]);
+});</code></pre>
+
+                        <h6>9.2 <code>sharedLock()</code> – Shared Lock (Read Lock)</h6>
+                        <ul>
+                            <li>Allows reading data but prevents it from being modified by other transactions during the
+                                read.</li>
+                            <li>Useful for <strong>reporting, data consistency checks, and validations</strong>.</li>
+                        </ul>
+                        <pre><code>$reportData = DB::table('orders')
+              ->where('status', 'pending')
+              ->sharedLock()
+              ->get();</code></pre>
+
+                        <h6>9.2 <strong>Optimistic Locking (Manual)</strong></h6>
+                        <div class="ms-5">
+                            <h6>9.2.1 Definition</h6>
+                            <ul>
+                                <li>Optimistic locking is a <strong>concurrency control</strong> technique.</li>
+                                <li>It <strong>assumes conflicts are rare</strong> and avoids row-level locking.</li>
+                                <li>Relies on a <strong>version number or timestamp</strong> to detect changes.</li>
+                                <li>Prevents users from overwriting each other’s updates.</li>
+                            </ul>
+
+                            <h6>9.2.2 Core Principle</h6>
+                            <ul>
+                                <li>Add a <code>version</code> column (or use <code>updated_at</code>).</li>
+                                <li>On update, client sends the version it read.</li>
+                                <li>Server compares with current DB version:</li>
+                                <ul>
+                                    <li>✅ If matched → proceed and increment version.</li>
+                                    <li>❌ If mismatched → abort with <code>409 Conflict</code>.</li>
+                                </ul>
+                            </ul>
+
+                            <h6>9.2.3 Required Table Setup</h6>
+                            <pre><code>Schema::table('products', function (Blueprint $table) {
+    $table->unsignedInteger('version')->default(1);
+});</code></pre>
+                            <p><em>Optional: Use <code>updated_at</code> instead, but <code>version</code> is more
+                                    explicit.</em></p>
+
+                            <h6>9.2.4 Laravel Manual Implementation</h6>
+                            <pre><code>$product = Product::findOrFail($id);
+
+if ($request->input('version') != $product->version) {
+    return response()->json(['message' => 'Conflict'], 409);
+}
+
+$product->fill($request->only(['name', 'price']));
+$product->version++; // Increment version
+$product->save();</code></pre>
+
+                            <h6>9.2.5 Alternative (Safer) SQL Way</h6>
+                            <pre><code>$affected = DB::table('products')
+    ->where('id', $id)
+    ->where('version', $request->input('version'))
+    ->update([
+        'name' => 'New Name',
+        'version' => DB::raw('version + 1'),
+    ]);
+
+if ($affected === 0) {
+    // Conflict occurred
+}</code></pre>
+
+                            <h6>9.2.6 Frontend Responsibility</h6>
+                            <ul>
+                                <li>Client must send the <code>version</code> of the record it fetched.</li>
+                                <li>Handle <code>409 Conflict</code> (e.g., refetch data, show warning).</li>
+                            </ul>
+
+                            <h6>9.2.7 Use Cases</h6>
+                            <ul>
+                                <li>REST APIs with concurrent users (e.g., products, orders, profiles).</li>
+                                <li>Prevent silent overwrites in low-write/high-read apps.</li>
+                                <li>CRMs, inventory systems, collaborative editing.</li>
+                            </ul>
+
+                            <h6>9.2.8 Pros & Cons</h6>
+                            <ul>
+                                <li>✅ No DB row lock → better for high-concurrency systems.</li>
+                                <li>✅ Avoids deadlocks entirely.</li>
+                                <li>❌ Manual conflict handling required in code and UI.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Authorization with Policies and Gates -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTen">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseEleven">
+                        <strong>11</strong>&nbsp; Authorization with Policies and Gates
+                    </button>
+                </h2>
+                <div id="collapseEleven" class="accordion-collapse collapse" data-bs-parent="#eloquentAccordion">
+                    <div class="accordion-body">
+                        <p>Authorization with policies and gates remains a key part of managing access control in
+                            Laravel.</p>
+                        <ul>
+                            <li><strong>Policies</strong> – For resource-based access control (e.g., posts, users,
+                                orders).</li>
+                            <li><strong>Gates</strong> – For simple, closure-based access checks (not necessarily tied
+                                to models).</li>
+                        </ul>
+
+                        <h6>10.1 Creating and Registering a Policy</h6>
+                        <ul>
+                            <li><code>php artisan make:policy PostPolicy --model=Post</code></li>
+                            <li>Register the policy in <code>App\Providers\AuthServiceProvider</code>.</li>
+                        </ul>
+
+                        <h6>10.2 Defining Policy Methods</h6>
+                        <ul>
+                            <li>You can define methods like <code>view</code>, <code>create</code>, <code>update</code>,
+                                <code>delete</code>, <code>restore</code>, <code>forceDelete</code>.
+                            </li>
+                            <li>Define access logic inside each method accordingly.</li>
+                        </ul>
+
+                        <h6>10.3 Using <code>authorize()</code> Method (in Controllers)</h6>
+                        <pre><code>$this->authorize('update', $post);</code></pre>
+                        <p>Automatically throws a 403 if unauthorized.</p>
+
+                        <h6>10.4 Using <code>@can</code> in Blade Templates</h6>
+                        <pre><code>@can('update', $post)
+  &lt;a href="#"&gt;Edit&lt;/a&gt;
+@endcan</code></pre>
+
+                        <h6>10.5 Using <code>can()</code> in Controller or Anywhere</h6>
+                        <pre><code>if (auth()->user()->can('update', $post)) {
+    // Proceed
+}</code></pre>
+
+                        <h6>10.6 Using Gate for Simple Checks (Non-model)</h6>
+                        <p><strong>Define in <code>AuthServiceProvider</code>:</strong></p>
+                        <pre><code>Gate::define('view-dashboard', function (User $user) {
+    return $user->is_admin;
+});</code></pre>
+
+                        <p><strong>Check in code:</strong></p>
+                        <pre><code>if (Gate::allows('view-dashboard')) {
+    // Access granted
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Caching & Performance -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingCaching">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseTewelve">
+                        <strong>12</strong>&nbsp; Caching & Performance
+                    </button>
+                </h2>
+                <div id="collapseTewelve" class="accordion-collapse collapse" data-bs-parent="#eloquentAccordion">
+                    <div class="accordion-body">
+                        <h6>12.1 Caching Queries (Using Laravel Cache)</h6>
+                        <ul>
+                            <li><strong>Basic Usage</strong>:
+                                <pre><code>$products = Cache::remember('products_all', 60, function () {
+    return Product::all();
+});</code></pre>
+                            </li>
+                            <li><strong>With Parameters</strong> (e.g., user-specific cache):
+                                <pre><code>$key = 'user_' . $userId . '_orders';
+$orders = Cache::remember($key, 60, function () use ($userId) {
+    return Order::where('user_id', $userId)->get();
+});</code></pre>
+                            </li>
+                            <li><strong>Clear Cache</strong>:
+                                <pre><code>Cache::forget('products_all');</code></pre>
+                            </li>
+                            <li>💡 Use cache wisely for <strong>static or slow-changing data</strong> like categories,
+                                settings, etc.</li>
+                        </ul>
+
+                        <h6>12.2 Lazy Loading vs LazyById (Performance Tip)</h6>
+                        <ul>
+                            <li><strong>Lazy Loading</strong>:
+                                <pre><code>$products = Product::all();
+$products->load('category');</code></pre>
+                            </li>
+                            <li><strong>lazy()</strong> – Memory-efficient chunking:
+                                <pre><code>Product::lazy()->each(function ($product) {
+    // Process product
+});</code></pre>
+                            </li>
+                            <li><strong>lazyById()</strong> – Avoids OFFSET, faster:
+                                <pre><code>Product::lazyById()->each(function ($product) {
+    // Efficient for large tables
+});</code></pre>
+                            </li>
+                            <li>🧠 <code>lazyById()</code> uses <code>WHERE id > ?</code>, better than OFFSET for large
+                                datasets.</li>
+                        </ul>
+
+                        <h6>12.3 Query Logging & Debugging</h6>
+                        <ul>
+                            <li><strong>Log All Queries</strong>:
+                                <pre><code>DB::listen(function ($query) {
+    logger($query->sql);
+    logger($query->bindings);
+    logger($query->time);
+});</code></pre>
+                            </li>
+                            <li><strong>Add to AppServiceProvider</strong> → <code>boot()</code> for real-time logging.
+                            </li>
+                            <li><strong>Query Log (Not in Production)</strong>:
+                                <pre><code>DB::enableQueryLog();
+$results = DB::table('users')->get();
+dd(DB::getQueryLog());</code></pre>
+                            </li>
+                            <li>✅ Use <strong>Telescope</strong> or <strong>Debugbar</strong> for better visual query
+                                tracking.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resource Transformation – API Resources -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingResources">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseResources">
+                        <strong>13</strong>&nbsp; Resource Transformation – API Resources
+                    </button>
+                </h2>
+                <div id="collapseResources" class="accordion-collapse collapse" data-bs-parent="#eloquentAccordion">
+                    <div class="accordion-body">
+
+                        <h6>13.1 API Resource Classes (<code>JsonResource</code>)</h6>
+                        <ul>
+                            <li>Transform model data for clean, structured API responses.</li>
+                            <li>Generate with Artisan:
+                                <pre><code>php artisan make:resource ProductResource</code></pre>
+                            </li>
+                            <li>Usage in controller:
+                                <pre><code>return new ProductResource($product);</code></pre>
+                            </li>
+                            <li>Basic example:
+                                <pre><code>public function toArray($request)
+{
+    return [
+        'id' => $this->id,
+        'name' => $this->name,
+        'price' => $this->price,
+    ];
+}</code></pre>
+                            </li>
+                        </ul>
+
+                        <h6>13.2 Resource Collections</h6>
+                        <ul>
+                            <li>Transform a collection of models:</li>
+                            <pre><code>return ProductResource::collection(Product::all());</code></pre>
+                            <li>Customize the collection response:
+                                <pre><code>public function toArray($request)
+{
+    return [
+        'data' => $this->collection,
+        'meta' => ['version' => '1.0']
+    ];
+}</code></pre>
+                            </li>
+                        </ul>
+
+                        <h6>13.3 Conditional Attributes</h6>
+                        <ul>
+                            <li><strong>whenLoaded()</strong> – Only include relation if it was eager loaded:
+                                <pre><code>'category' => new CategoryResource($this->whenLoaded('category'))</code></pre>
+                            </li>
+                            <li><strong>when()</strong> – Conditionally include data:
+                                <pre><code>'discount' => $this->when($this->hasDiscount(), $this->discount)</code></pre>
+                            </li>
+                            <li><strong>mergeWhen()</strong> – Merge multiple fields conditionally:
+                                <pre><code>$this->mergeWhen($this->isAdmin(), [
+    'cost_price' => $this->cost_price,
+    'supplier' => $this->supplier,
+])</code></pre>
+                            </li>
+                            <li>✅ Helps keep response clean and secure (e.g., hide sensitive info).</li>
+                        </ul>
+
+                        <h6>13.4 Benefits of Using Resources</h6>
+                        <ul>
+                            <li>Separation of concerns (logic stays out of controller).</li>
+                            <li>Clear, reusable formatting for frontend apps (SPA, mobile).</li>
+                            <li>Security: hide internal fields like <code>password</code>, <code>tokens</code>, etc.
+                            </li>
+                            <li>Easy to maintain consistent API structure.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Query Scopes – Local, Global, and Anonymous -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingScopes">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseScopes">
+                        <strong>14</strong>&nbsp; Query Scopes – Local, Global, and Anonymous
+                    </button>
+                </h2>
+                <div id="collapseScopes" class="accordion-collapse collapse" data-bs-parent="#eloquentAccordion">
+                    <div class="accordion-body">
+
+                        <h6>14.1 Local Scopes</h6>
+                        <ul>
+                            <li>Reusable query constraints defined in the model.</li>
+                            <li>Syntax: prefix method with <code>scope</code> in model.
+                                <pre><code>// In Product.php
+public function scopeActive($query)
+{
+    return $query->where('status', 'active');
+}</code></pre>
+                            </li>
+                            <li>Usage:
+                                <pre><code>Product::active()->get();</code></pre>
+                            </li>
+                            <li>Can accept parameters:
+                                <pre><code>public function scopeOfCategory($query, $categoryId)
+{
+    return $query->where('category_id', $categoryId);
+}</code></pre>
+                            </li>
+
+                        </ul>
+
+                        <h6>14.2 Global Scopes</h6>
+                        <ul>
+                            <li>Automatically apply constraints to **all** queries for a model.</li>
+                            <li>Use case: soft delete filters, multi-tenancy, only show verified content.</li>
+                            <pre><code>// Create scope class
+php artisan make:scope ActiveScope</code></pre>
+
+                            <pre><code>use Illuminate\Database\Eloquent\Scope;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
+
+class ActiveScope implements Scope
+{
+    public function apply(Builder $builder, Model $model)
+    {
+        $builder->where('status', 'active');
+    }
+}</code></pre>
+
+                            <pre><code>// Apply in model
+protected static function booted()
+{
+    static::addGlobalScope(new ActiveScope);
+}</code></pre>
+                        </ul>
+
+                        <h6>14.3 Anonymous Global Scopes</h6>
+                        <ul>
+                            <li>Apply global scopes inline using closures — no need to create a class.</li>
+                            <li>Example:
+                                <pre><code>protected static function booted()
+{
+    static::addGlobalScope('active_only', function ($builder) {
+        $builder->where('status', 'active');
+    });
+}</code></pre>
+                            </li>
+                            <li>Useful for small or model-specific conditions.</li>
+                        </ul>
+
+                        <h6>🚫 Removing Global Scopes</h6>
+                        <ul>
+                            <li>Remove globally applied scopes when needed:
+                                <pre><code>Product::withoutGlobalScope(ActiveScope::class)->get();
+Product::withoutGlobalScopes()->get();</code></pre>
+                            </li>
+                        </ul>
+
+                        <h6>14.4 Benefits of Using Scopes</h6>
+                        <ul>
+                            <li>DRY: Centralize common query logic.</li>
+                            <li>Readable & chainable syntax.</li>
+                            <li>Cleaner controllers and repositories.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Advanced Eloquent Topics -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingAdvanced">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseAdvanced">
+                        <strong>15</strong>&nbsp; Other Advanced Eloquent Topics
+                    </button>
+                </h2>
+                <div id="collapseAdvanced" class="accordion-collapse collapse" data-bs-parent="#eloquentAccordion">
+                    <div class="accordion-body">
+                        <h6>15.1 Multi-Database Connections</h6>
+                        <ul>
+                            <li>Use multiple databases per model/query:</li>
+                            <pre><code>protected $connection = 'mysql2';</code></pre>
+                            <li>Or use on the fly:
+                                <pre><code>DB::connection('pgsql')->select(...);</code></pre>
+                        </ul>
+
+                        <h6>15.2 Laravel Scout (Full Text Search)</h6>
+                        <ul>
+                            <li>Integrates with Algolia, Meilisearch, or database driver for full-text search.</li>
+                            <pre><code>use Laravel\Scout\Searchable;
+
+class Post extends Model {
+    use Searchable;
+}</code></pre>
+                            <li>Search:
+                                <pre><code>Post::search('laravel')->get();</code></pre>
+                            </li>
+                        </ul>
+
+                        <h6>15.7 Custom Eloquent Builders</h6>
+                        <ul>
+                            <li>Add custom query methods to models.</li>
+                            <pre><code>class CustomBuilder extends Builder {
+    public function published() {
+        return $this->where('status', 'published');
+    }
+}</code></pre>
+                            <pre><code>public function newEloquentBuilder($query)
+{
+    return new CustomBuilder($query);
+}</code></pre>
+                        </ul>
+
+                        <h6>15.8 Model Macros</h6>
+                        <ul>
+                            <li>Add reusable methods to Eloquent at runtime.</li>
+                            <pre><code>Builder::macro('active', function () {
+    return $this->where('status', 'active');
+});</code></pre>
+                            <pre><code>Product::active()->get();</code></pre>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const searchInput = document.getElementById('search');
+        searchInput.addEventListener('keyup', function () {
+            const query = this.value.toLowerCase();
+
+            document.querySelectorAll('#eloquentAccordion .accordion-item').forEach(item => {
+                const button = item.querySelector('button.accordion-button');
+                const heading = item.querySelector('h6');
+
+                const buttonText = button?.textContent.toLowerCase() || '';
+                const headingText = heading?.textContent.toLowerCase() || '';
+
+                const matches = buttonText.includes(query) || headingText.includes(query);
+                item.style.display = matches ? '' : 'none';
+            });
+        });
+    </script>
+</body>
+
+</html>

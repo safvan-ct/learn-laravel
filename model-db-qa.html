@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model & DB - Q&A</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .section {
+            margin-top: 2rem;
+        }
+
+        .section h2 {
+            border-bottom: 2px solid #dee2e6;
+            padding-bottom: 0.5rem;
+        }
+
+        pre {
+            background-color: #f1f1f1;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            color: var(--bs-code-color);
+        }
+
+        .accordion-button::after {
+            transform: scale(1.3);
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+        }
+
+        .accordion-button:focus {
+            box-shadow: none;
+            border-color: transparent;
+            outline: none;
+        }
+
+        .accordion-button:not(.collapsed) {
+            box-shadow: none;
+            border-color: transparent;
+        }
+    </style>
+</head>
+
+<body class="bg-light text-dark">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+        <div class="container">
+            <a class="navbar-brand text-primary fw-bold" href="#">Laravel Guide</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="model-db.html">Model & DB</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="model-db-qa.html">Model & DB - Q&A</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-4">
+        <h1 class="text-center mb-5">
+            <i class="fas fa-question-circle me-2 mt-1 text-primary"></i>
+            Laravel Eloquent and DB interview questions
+        </h1>
+
+        <!-- Search -->
+        <input type="search" id="search" class="form-control mb-4 search-input"
+            placeholder="Search questions or keywords..." aria-label="Search">
+
+        <!-- Laravel Eloquent & DB Interview Questions Accordion -->
+        <div class="accordion" id="eloquentAccordion">
+
+            <!-- Laravel Model & DB FAQs Accordion -->
+            <div class="accordion" id="eloquentAccordion">
+
+                <!-- 1. Fillable vs Guarded -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingOne">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseOne">
+                            <i class="fas fa-question me-2 mt-1 text-primary"></i>
+                            Difference between &nbsp;<code>$fillable</code>&nbsp;and&nbsp;<code>$guarded</code>
+                        </button>
+                    </h2>
+                    <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#eloquentAccordion">
+                        <div class="accordion-body">
+                            <p><strong>$fillable</strong>: Only specified attributes can be mass‑assigned.</p>
+                            <pre><code class="language-php">protected $fillable = ['name', 'email'];</code></pre>
+
+                            <p><strong>$guarded</strong>: All attributes are mass‑assignable <em>except</em> the listed
+                                ones.</p>
+                            <pre><code class="language-php">protected $guarded = ['is_admin'];</code></pre>
+
+                            <p><strong>Tip</strong>: Prefer <code>$fillable</code> for safer mass assignment.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Accessors and Mutators -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingTwo">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseTwo">
+                            <i class="fas fa-question me-2 mt-1 text-primary"></i> How to use Accessors and Mutators
+                        </button>
+                    </h2>
+                    <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#eloquentAccordion">
+                        <div class="accordion-body">
+                            <p><strong>Accessors</strong>: Customize how a value is <em>retrieved</em> from the
+                                database.</p>
+                            <pre><code class="language-php">public function getNameAttribute($value) {
+    return ucfirst($value);
+}</code></pre>
+
+                            <p><strong>Mutators</strong>: Modify a value <em>before saving</em> it to the database.</p>
+                            <pre><code class="language-php">public function setPasswordAttribute($value) {
+    $this->attributes['password'] = bcrypt($value);
+}</code></pre>
+
+                            <p><strong>Unified Syntax (Laravel 9+)</strong>:</p>
+                            <pre><code class="language-php">use Illuminate\Database\Eloquent\Casts\Attribute;
+
+public function name(): Attribute {
+    return Attribute::make(
+        get: fn ($value) => ucfirst($value),
+        set: fn ($value) => strtolower($value),
+    );
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Eloquent Relationships Examples -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingThree">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseThree">
+                            <i class="fas fa-question me-2 mt-1 text-primary"></i> What are Eloquent relationships?
+                            Examples?
+                        </button>
+                    </h2>
+                    <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#eloquentAccordion">
+                        <div class="accordion-body">
+                            <ul>
+                                <li><strong>One‑to‑One:</strong> <code
+                                        class="language-php">$this-&gt;hasOne(Profile::class);</code></li>
+                                <li><strong>One‑to‑Many:</strong> <code
+                                        class="language-php">$this-&gt;hasMany(Post::class);</code></li>
+                                <li><strong>Many‑to‑Many:</strong> <code
+                                        class="language-php">$this-&gt;belongsToMany(Role::class);</code></li>
+                                <li><strong>Has‑Many‑Through:</strong> Country → Users → Posts</li>
+                            </ul>
+                            <p>Used to define how models relate in DB.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Polymorphic Relationships -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingFour">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseFour">
+                            <i class="fas fa-question me-2 mt-1 text-primary"></i> Explain polymorphic relationships
+                        </button>
+                    </h2>
+                    <div id="collapseFour" class="accordion-collapse collapse" data-bs-parent="#eloquentAccordion">
+                        <div class="accordion-body">
+                            <p>Allow a model to belong to more than one other model on a single association.</p>
+                            <pre><code class="language-php">// Comment model
+public function commentable() {
+    return $this-&gt;morphTo();
+}</code></pre>
+                            <p>Then <code>Post</code> and <code>Video</code> models define
+                                <code>morphMany(Comment::class, 'commentable')</code>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. Pivot Table & withPivot -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingFive">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseFive">
+                            <i class="fas fa-question me-2 mt-1 text-primary"></i> Pivot table usage and withPivot
+                        </button>
+                    </h2>
+                    <div id="collapseFive" class="accordion-collapse collapse" data-bs-parent="#eloquentAccordion">
+                        <div class="accordion-body">
+                            <p>Use in many‑to‑many relationships.</p>
+                            <p><code>withPivot()</code> allows access to extra pivot fields.</p>
+                            <pre><code class="language-php">return $this-&gt;belongsToMany(Role::class)
+            -&gt;withPivot('assigned_by', 'assigned_at');</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. Eager Loading vs Lazy Loading -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingSix">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseSix">
+                            <i class="fas fa-question me-2 mt-1 text-primary"></i> What is eager loading? Lazy
+                            loading?
+                        </button>
+                    </h2>
+                    <div id="collapseSix" class="accordion-collapse collapse" data-bs-parent="#eloquentAccordion">
+                        <div class="accordion-body">
+                            <p><strong>Eager Loading</strong>: Load relation with main query to avoid N+1.</p>
+                            <pre><code class="language-php">User::with('posts')-&gt;get();</code></pre>
+                            <p><strong>Lazy Loading</strong>: Relation is loaded on demand (may cause N+1).</p>
+                            <pre><code class="language-php">$user-&gt;posts;</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7. Model Observers -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingSeven">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseSeven">
+                            <i class="fas fa-question me-2 mt-1 text-primary"></i> How do you use model observers?
+                        </button>
+                    </h2>
+                    <div id="collapseSeven" class="accordion-collapse collapse" data-bs-parent="#eloquentAccordion">
+                        <div class="accordion-body">
+                            <p>Create an observer class to handle model events.</p>
+                            <pre><code class="language-bash">php artisan make:observer UserObserver --model=User</code></pre>
+                            <p>Register in <code>AppServiceProvider</code> or model boot:
+                                <code>User::observe(UserObserver::class);</code>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 8. Soft Deletes -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingEight">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseEight">
+                            <i class="fas fa-question me-2 mt-1 text-primary"></i> What is soft delete and how
+                            does it work?
+                        </button>
+                    </h2>
+                    <div id="collapseEight" class="accordion-collapse collapse" data-bs-parent="#eloquentAccordion">
+                        <div class="accordion-body">
+                            <p>Marks a record as deleted (sets <code>deleted_at</code>) without actually deleting.</p>
+                            <pre><code class="language-php">use Illuminate\Database\Eloquent\SoftDeletes;</code></pre>
+                            <p>Retrieve trashed: <code>User::withTrashed()</code>, restore:
+                                <code>$user->restore();</code>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 9. Database Transactions -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingNine">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseNine">
+                            <i class="fas fa-question me-2 mt-1 text-primary"></i> How does Laravel handle
+                            transactions?
+                        </button>
+                    </h2>
+                    <div id="collapseNine" class="accordion-collapse collapse" data-bs-parent="#eloquentAccordion">
+                        <div class="accordion-body">
+                            <p>Ensures DB operations are atomic.</p>
+                            <pre><code class="language-php">DB::transaction(function () {
+    // atomic queries
+});</code></pre>
+                            <p>Manual: <code>DB::beginTransaction()</code>, <code>commit()</code>,
+                                <code>rollBack()</code>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 10. Locking -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingTen">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseTen">
+                            <i class="fas fa-question me-2 mt-1 text-primary"></i> lockForUpdate vs sharedLock
+                        </button>
+                    </h2>
+                    <div id="collapseTen" class="accordion-collapse collapse" data-bs-parent="#eloquentAccordion">
+                        <div class="accordion-body">
+                            <p><code>lockForUpdate()</code>: Write lock – blocks other writes & reads.</p>
+                            <p><code>sharedLock()</code>: Read lock – blocks writes but allows reads.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 11. Policies -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingEleven">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseEleven">
+                            <i class="fas fa-question me-2 mt-1 text-primary"></i> How do you implement policies
+                            in Laravel?
+                        </button>
+                    </h2>
+                    <div id="collapseEleven" class="accordion-collapse collapse" data-bs-parent="#eloquentAccordion">
+                        <div class="accordion-body">
+                            <ol>
+                                <li>Create: <code
+                                        class="language-bash">php artisan make:policy PostPolicy --model=Post</code>
+                                </li>
+                                <li>Define methods like <code>update()</code>.</li>
+                                <li>Register in <code>AuthServiceProvider</code>.</li>
+                                <li>Use: <code>$this->authorize('update', $post);</code></li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 12. Custom Casts -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingTwelve">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseTwelve">
+                            <i class="fas fa-question me-2 mt-1 text-primary"></i> What are custom casts?
+                        </button>
+                    </h2>
+                    <div id="collapseTwelve" class="accordion-collapse collapse" data-bs-parent="#eloquentAccordion">
+                        <div class="accordion-body">
+                            <p>Transform attribute to/from custom value object.</p>
+                            <pre><code class="language-php">protected $casts = [
+    'settings' => SettingsCast::class,
+];</code></pre>
+                            <p>Create cast: <code class="language-bash">php artisan make:cast SettingsCast</code></p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 13. has() vs with() -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingThirteen">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseThirteen">
+                            <i class="fas fa-question me-2 mt-1 text-primary"></i> Difference between has() and
+                            with()
+                        </button>
+                    </h2>
+                    <div id="collapseThirteen" class="accordion-collapse collapse" data-bs-parent="#eloquentAccordion">
+                        <div class="accordion-body">
+                            <p><code>has()</code>: Filter records that have a related model.</p>
+                            <pre><code class="language-php">Post::has('comments')->get();</code></pre>
+                            <p><code>with()</code>: Eager load relationship.</p>
+                            <pre><code class="language-php">Post::with('comments')->get();</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 14. Efficient Queries -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingFourteen">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseFourteen">
+                            <i class="fas fa-question me-2 mt-1 text-primary"></i> How to write efficient
+                            queries in Laravel?
+                        </button>
+                    </h2>
+                    <div id="collapseFourteen" class="accordion-collapse collapse" data-bs-parent="#eloquentAccordion">
+                        <div class="accordion-body">
+                            <ul>
+                                <li>Use <code>select()</code> to limit columns.</li>
+                                <li>Eager load required relationships.</li>
+                                <li>Use <code>chunk()</code> / <code>cursor()</code> for big datasets.</li>
+                                <li>Add DB indexes.</li>
+                                <li>Avoid N+1 queries.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 15. hasManyThrough & morphToMany -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingFifteen">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseFifteen">
+                            <i class="fas fa-question me-2 mt-1 text-primary"></i> Explain hasManyThrough and
+                            morphToMany
+                        </button>
+                    </h2>
+                    <div id="collapseFifteen" class="accordion-collapse collapse" data-bs-parent="#eloquentAccordion">
+                        <div class="accordion-body">
+                            <p><strong>hasManyThrough</strong>: Indirect relation via intermediate model.</p>
+                            <pre><code class="language-php">public function posts() {
+    return $this->hasManyThrough(Post::class, User::class);
+}</code></pre>
+                            <p><strong>morphToMany</strong>: Polymorphic many‑to‑many.</p>
+                            <pre><code class="language-php">public function tags() {
+    return $this->morphToMany(Tag::class, 'taggable');
+}</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 16. Local vs Global Scopes -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingSixteen">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseSixteen">
+                            <i class="fas fa-question me-2 mt-1 text-primary"></i> What are Local and Global
+                            Scopes in Eloquent?
+                        </button>
+                    </h2>
+                    <div id="collapseSixteen" class="accordion-collapse collapse" data-bs-parent="#eloquentAccordion">
+                        <div class="accordion-body">
+                            <p><strong>Local Scope</strong>: Used to define reusable query logic within a model.</p>
+                            <pre><code>public function scopeActive($query)
+{
+    return $query->where('status', 'active');
+}</code></pre>
+
+                            <p>Usage:</p>
+                            <pre><code>User::active()->get();</code></pre>
+
+                            <p><strong>Global Scope</strong>: Automatically applied to all queries on a model.</p>
+                            <pre><code>protected static function booted()
+{
+    static::addGlobalScope(new ActiveScope);
+}</code></pre>
+
+                            <p><strong>Best Practice</strong>: Use local scopes for flexibility, global scopes for
+                                consistent filtering (e.g., soft deletes, multi-tenancy).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 17. When and how to use raw queries -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingSeventeen">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseSeventeen">
+                            <i class="fas fa-question me-2 mt-1 text-primary"></i> When and how to use raw
+                            queries?
+                        </button>
+                    </h2>
+                    <div id="collapseSeventeen" class="accordion-collapse collapse" data-bs-parent="#eloquentAccordion">
+                        <div class="accordion-body">
+                            <p><strong>When to use:</strong> Use raw queries when Eloquent or Query Builder cannot
+                                handle complex SQL logic or performance-critical operations.</p>
+
+                            <p><strong>How to use:</strong> Laravel provides DB facade methods like <code>select</code>,
+                                <code>insert</code>, <code>update</code>, and <code>delete</code> for raw queries.
+                            </p>
+
+                            <pre><code>use Illuminate\Support\Facades\DB;
+
+$users = DB::select('SELECT * FROM users WHERE status = ?', ['active']);</code></pre>
+
+                            <p><strong>Note:</strong> Always use parameter binding (as shown above) to prevent SQL
+                                injection.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 18. withCount() -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingTwo">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                            <i class="fas fa-question me-2 mt-1 text-primary"></i> What is
+                            &nbsp;<code>withCount()</code>&nbsp; and how is it used?
+                        </button>
+                    </h2>
+                    <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#eloquentAccordion">
+                        <div class="accordion-body">
+                            <p><strong>withCount()</strong>: Adds a <code>_count</code> attribute to the model with the
+                                number of related records.</p>
+                            <p>Example: Count the number of <code>posts</code> each <code>User</code> has.</p>
+                            <pre><code>use App\Models\User;
+
+$users = User::withCount('posts')->get();</code></pre>
+                            <p>This will add a <code>posts_count</code> attribute to each <code>User</code> instance.
+                            </p>
+
+                            <p><strong>Use Case:</strong> Useful when displaying counts (e.g. comments, likes) without
+                                loading the entire relationship.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 19. How to optimize database queries in Laravel -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingNineteen">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseNineteen">
+                            <i class="fas fa-question me-2 mt-1 text-primary"></i> How to optimize database
+                            queries in Laravel?
+                        </button>
+                    </h2>
+                    <div id="collapseNineteen" class="accordion-collapse collapse" data-bs-parent="#eloquentAccordion">
+                        <div class="accordion-body">
+                            <ul>
+                                <li><strong>Eager Load Relationships:</strong> Use <code>with()</code> to prevent N+1
+                                    query issues.</li>
+                                <li><strong>Use <code>select()</code> wisely:</strong> Retrieve only needed columns to
+                                    reduce load.</li>
+                                <li><strong>Database Indexing:</strong> Add indexes on frequently queried columns (like
+                                    foreign keys, filters).</li>
+                                <li><strong>Avoid Nested Loops:</strong> Optimize loops that trigger multiple queries
+                                    using eager loading or joins.</li>
+                                <li><strong>Use <code>chunk()</code> or <code>cursor()</code>:</strong> Efficiently
+                                    process large datasets without loading all into memory.</li>
+                                <li><strong>Avoid Unnecessary Queries in Loops:</strong> Move repetitive queries outside
+                                    loops when possible.</li>
+                            </ul>
+                            <p class="mb-0"><strong>Tip:</strong> Use Laravel Debugbar or Telescope to monitor and
+                                optimize query performance.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 20 Difference between first(), get(), find() -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="headingTwo">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseTwo">
+                            <i class="fas fa-question me-2 mt-1 text-primary"></i> Difference between first(),
+                            get(), find() ?
+                        </button>
+                    </h2>
+                    <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#eloquentAccordion">
+                        <div class="accordion-body">
+                            <p><strong>first()</strong>: Returns the <em>first matched record</em> as a single model
+                                instance or <code>null</code> if none found.</p>
+                            <pre><code>User::where('active', true)->first();</code></pre>
+
+                            <p><strong>get()</strong>: Returns <em>all matched records</em> as a collection.</p>
+                            <pre><code>User::where('active', true)->get();</code></pre>
+
+                            <p><strong>find(id)</strong>: Returns a record by <em>primary key</em> or <code>null</code>
+                                if not found.</p>
+                            <pre><code>User::find(1);</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src=" https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            const searchInput = document.getElementById('search');
+            searchInput.addEventListener('keyup', function () {
+                const query = this.value.toLowerCase();
+
+                document.querySelectorAll('#eloquentAccordion .accordion-item').forEach(item => {
+                    const button = item.querySelector('button.accordion-button');
+                    const heading = item.querySelector('h6');
+
+                    const buttonText = button?.textContent.toLowerCase() || '';
+                    const headingText = heading?.textContent.toLowerCase() || '';
+
+                    const matches = buttonText.includes(query) || headingText.includes(query);
+                    item.style.display = matches ? '' : 'none';
+                });
+            });
+        </script>
+</body>
+
+</html>
