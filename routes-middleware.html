@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Routes & Middleware</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="bg-light text-dark">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm sticky-top">
+        <div class="container">
+            <a class="navbar-brand text-primary fw-bold" href="index.html">Learn Laravel</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link active" href="routes-middleware.html">Routes &
+                            Middleware</a> </li>
+                    <li class="nav-item"><a class="nav-link" href="model-db.html">Model & DB</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-4">
+        <h1 class="text-center mb-2"><i class="fas fa-book-open text-primary me-2"></i> Routes & Middleware
+        </h1>
+
+        <div class="text-center mb-4">
+            <a href="routes-middleware-qa.html" class="btn btn-primary btn-lg">
+                <i class="fas fa-question-circle me-2"></i> Questions & Answers
+            </a>
+        </div>
+
+
+        <!-- Search -->
+        <input type="search" id="search" class="form-control mb-4 search-input"
+            placeholder="Search topics or keywords..." aria-label="Search">
+
+        <!-- Section Template -->
+        <div class="accordion" id="eloquentAccordion">
+            <!-- ROUTES -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingOne">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseOne">
+                        <strong>01</strong>&nbsp; ROUTES
+                    </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#eloquentAccordion">
+                    <div class="accordion-body">
+                        <h6>1.1 Route Files</h6>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>File</th>
+                                    <th>Purpose</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>routes/web.php</code></td>
+                                    <td>Browser-based routes with session, CSRF</td>
+                                </tr>
+                                <tr>
+                                    <td><code>routes/api.php</code></td>
+                                    <td>API routes — stateless, JSON responses</td>
+                                </tr>
+                                <tr>
+                                    <td><code>routes/console.php</code></td>
+                                    <td>Artisan CLI commands</td>
+                                </tr>
+                                <tr>
+                                    <td><code>routes/channels.php</code></td>
+                                    <td>For broadcasting channels (WebSockets)</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h6>1.2 Web Routes (web.php)</h6>
+                        <ul>
+                            <li> Uses the <code>web</code> middleware group </li>
+                            <li>Has sessions, CSRF, and cookies enabled </li>
+                        </ul>
+                        <pre><code>Route::get('/', fn () => view('welcome'));
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::resource('products', Api\ProductController::class);
+</code></pre>
+
+                        <h6>1.3 API Routes (api.php)</h6>
+                        <ul>
+                            <li>Prefixed automatically with /api</li>
+                            <li>Uses the api middleware group</li>
+                            <li>Stateless — doesn't use sessions or cookies</li>
+                        </ul>
+                        <pre><code>Route::get('/products', [Api\ProductController::class, 'index']);
+Route::apiResource('users', Api\UserController::class);
+</code></pre>
+
+
+                        <h6>1.4 Route Naming</h6>
+                        <p>For cleaner usage in views and controllers</p>
+                        <pre><code>Route::get('/profile', [UserController::class, 'show'])->name('profile');
+
+route('profile')
+</code></pre>
+
+                        <h6>1.5 Route Parameters</h6>
+                        <pre><code>Route::get('/user/{id}', [UserController::class, 'show']);
+Route::get('/post/{slug?}', [PostController::class, 'optional']);
+</code></pre>
+
+                        <h6>1.6 Route Grouping</h6>
+                        <p>Prefix + Middleware + Namespace</p>
+                        <pre><code>Route::prefix('admin') // URL prefix
+    ->middleware(['auth', 'is_admin']) // Middleware stack
+    ->namespace('App\Http\Controllers\Admin') // Controller namespace (optional in Laravel 12)
+    ->group(function () {
+    
+    Route::get('/dashboard', 'DashboardController@index')->name('admin.dashboard');
+    Route::resource('/users', 'UserController');
+});
+</code></pre>
+
+                        <h6>1.7 Route Model Binding</h6>
+                        <pre><code>Route::get('/user/{user}', [UserController::class, 'show']); // Injects User model automatically</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MIDDLEWARE -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTwo">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseTwo">
+                        <strong>02</strong>&nbsp; MIDDLEWARE
+                    </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#eloquentAccordion">
+                    <div class="accordion-body">
+                        <h6>2.1 Default Middleware Groups (in bootstrap/app.php)</h6>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Group</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>web</code></td>
+                                    <td>Has session, CSRF, cookies, encryption</td>
+                                </tr>
+                                <tr>
+                                    <td><code>api</code></td>
+                                    <td>Throttling, stateless, CORS, JSON only</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h6>2.2 Common Middleware</h6>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Middleware</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>auth</code></td>
+                                    <td>Require authenticated user</td>
+                                </tr>
+                                <tr>
+                                    <td><code>guest</code></td>
+                                    <td>Only for non-authenticated users</td>
+                                </tr>
+                                <tr>
+                                    <td><code>verified</code></td>
+                                    <td>Email verification required</td>
+                                </tr>
+                                <tr>
+                                    <td><code>throttle</code></td>
+                                    <td>Rate limiting</td>
+                                </tr>
+                                <tr>
+                                    <td><code>signed</code></td>
+                                    <td>Signed URLs</td>
+                                </tr>
+                                <tr>
+                                    <td><code>can</code></td>
+                                    <td>Authorization via Gate/Policy</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h6>2.3 Custom Middleware</h6>
+                        <p>Register in <code>bootstrap/app.php</code></p>
+                        <pre><code>php artisan make:middleware CheckRole</code></pre>
+                        <pre><code>public function handle($request, Closure $next)
+{
+    if (!auth()->check() || auth()->user()->role !== 'admin') {
+        abort(403);
+    }
+    return $next($request);
+}
+</code></pre>
+                        <pre><code>Route::middleware(['auth', 'check.role'])->group(...);</code></pre>
+
+                        <h6>2.4 Global vs Route Middleware</h6>
+                        <ul>
+                            <li>Global: Applied to every request (like <code>TrustProxies</code>, <code>Cors</code>,
+                                etc.)</li>
+                            <li>Route: Applied via route groups or single route (<code>auth</code>,
+                                <code>throttle</code>)
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API SPECIFIC TOPICS -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingThree">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseThree">
+                        <strong>03</strong>&nbsp; API SPECIFIC TOPICS
+                    </button>
+                </h2>
+                <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#eloquentAccordion">
+                    <div class="accordion-body">
+                        <h6>3.1 Throttle Requests</h6>
+                        <pre><code>Route::middleware('throttle:60,1')->group(function () {
+    Route::get('/api/secure', [ApiController::class, 'secure']);
+});
+</code></pre>
+                        <p>60 requests per 1 minute</p>
+
+                        <h6>3.2 Sanctum / Passport for API Authentication</h6>
+                        <ul>
+                            <li>Sanctum (lightweight token-based auth)</li>
+                            <li>Passport (OAuth2 + more features)</li>
+                        </ul>
+                        <pre><code>composer require laravel/sanctum
+php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
+php artisan migrate
+</code></pre>
+                        <pre><code>Route::middleware('auth:sanctum')->get('/user', fn(Request $request) => $request->user());</code></pre>
+
+                        <h6>3.3 API Response Format (Resource Classes)</h6>
+                        <pre><code>php artisan make:resource UserResource</code></pre>
+                        <pre><code>public function toArray($request)
+{
+    return [
+        'id' => $this->id,
+        'title' => $this->name,
+        'price' => $this->price,
+    ];
+}
+</code></pre>
+                        <pre><code>return new ProductResource($product);</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BEST PRACTICES -->
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingFour">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#collapseFour">
+                        <strong>04</strong>&nbsp; BEST PRACTICES
+                    </button>
+                </h2>
+                <div id="collapseFour" class="accordion-collapse collapse" data-bs-parent="#eloquentAccordion">
+                    <div class="accordion-body">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Best Practice</th>
+                                    <th>Tip</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>✅ Route naming</td>
+                                    <td>Use `.name()` for consistency</td>
+                                </tr>
+                                <tr>
+                                    <td>✅ Middleware</td>
+                                    <td>Separate logic cleanly using middleware</td>
+                                </tr>
+                                <tr>
+                                    <td>✅ Request validation</td>
+                                    <td>Use Form Request classes for cleaner controllers</td>
+                                </tr>
+                                <tr>
+                                    <td>✅ Route grouping</td>
+                                    <td>Group by prefix, role, namespace, or middleware</td>
+                                </tr>
+                                <tr>
+                                    <td>✅ Auth in API</td>
+                                    <td>Use Sanctum or Passport</td>
+                                </tr>
+                                <tr>
+                                    <td>✅ Throttling</td>
+                                    <td>Prevent abuse of public APIs</td>
+                                </tr>
+                                <tr>
+                                    <td>✅ CORS</td>
+                                    <td>Configure correctly in production apps</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const searchInput = document.getElementById('search');
+        searchInput.addEventListener('keyup', function () {
+            const query = this.value.toLowerCase();
+
+            document.querySelectorAll('#eloquentAccordion .accordion-item').forEach(item => {
+                const button = item.querySelector('button.accordion-button');
+                const heading = item.querySelector('h6');
+
+                const buttonText = button?.textContent.toLowerCase() || '';
+                const headingText = heading?.textContent.toLowerCase() || '';
+
+                const matches = buttonText.includes(query) || headingText.includes(query);
+                item.style.display = matches ? '' : 'none';
+            });
+        });
+    </script>
+</body>
+
+</html>
