@@ -1,0 +1,27 @@
+[
+    {
+        "title": "Routes & Middleware",
+        "description": "Learn about routes and middleware in Laravel.",
+        "slug": "routes-middleware"
+    },
+    {
+        "title": "Controllers & Requests",
+        "description": "Learn about controllers and requests in Laravel.",
+        "slug": "controllers-requests"
+    },
+    {
+        "title": "Service & Repositories",
+        "description": "Learn about service providers and repositories in Laravel.",
+        "slug": "service-repositories"
+    },
+    {
+        "title": "Model & DB",
+        "description": "Learn about models and databases in Laravel.",
+        "slug": "model-db"
+    },
+    {
+        "title": "Testing",
+        "description": "Learn about testing in Laravel.",
+        "slug": "testing"
+    }
+]

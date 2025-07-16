@@ -1,0 +1,98 @@
+[
+    {
+        "title": "ROUTES",
+        "sections": [
+            {
+                "heading": "1.1 Route Files",
+                "type": "table",
+                "headers": [
+                    "File",
+                    "Purpose"
+                ],
+                "rows": [
+                    [
+                        "routes/web.php",
+                        "Browser-based routes with session, CSRF"
+                    ],
+                    [
+                        "routes/api.php",
+                        "API routes - stateless, JSON responses"
+                    ],
+                    [
+                        "routes/console.php",
+                        "Artisan CLI commands"
+                    ],
+                    [
+                        "routes/channels.php",
+                        "For broadcasting channels (WebSockets)"
+                    ]
+                ]
+            },
+            {
+                "heading": "1.2 Web Routes (web.php)",
+                "type": "list",
+                "items": [
+                    "Uses the `web` middleware group",
+                    "Has `sessions`, `CSRF`, and `cookies` enabled"
+                ],
+                "code": "Route::get('/', fn () => view('welcome'));\nRoute::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');\nRoute::resource('products', Api\\ProductController::class);"
+            },
+            {
+                "heading": "1.3 API Routes (api.php)",
+                "type": "list",
+                "items": [
+                    "Prefixed automatically with `/api`",
+                    "Uses the api middleware group",
+                    "Stateless - doesn't use `sessions` or `cookies`"
+                ],
+                "code": "Route::get('/products', [Api\\ProductController::class, 'index']);\nRoute::apiResource('users', Api\\UserController::class);"
+            },
+            {
+                "heading": "1.4 Route Naming",
+                "type": "paragraph",
+                "items": [
+                    "For cleaner usage in views and controllers"
+                ],
+                "code": "Route::get('/profile', [UserController::class, 'show'])->name('profile');\nroute('profile')"
+            },
+            {
+                "heading": "1.5 Route Parameters",
+                "type": "paragraph",
+                "code": "Route::get('/user/{id}', [UserController::class, 'show']);\nRoute::get('/post/{slug?}', [PostController::class, 'optional']);"
+            },
+            {
+                "heading": "1.6 Route Grouping",
+                "type": "paragraph",
+                "code": "Route::prefix('admin') // URL prefix\n    ->middleware(['auth', 'is_admin']) // Middleware stack\n    ->namespace('App\\Http\\Controllers\\Admin') // Controller namespace (optional in Laravel 12)\n    ->group(function () {\n\n    Route::get('/dashboard', 'DashboardController@index')->name('admin.dashboard');Route::resource('/users', 'UserController');\n});"
+            },
+            {
+                "heading": "1.7 Route Model Binding",
+                "type": "paragraph",
+                "code": "Route::get('/user/{user}', [UserController::class, 'show']); // Injects User model automatically"
+            }
+        ]
+    },
+    {
+        "title": "MIDDLEWARE",
+        "sections": [
+            {
+                "heading": "2.1 Default Middleware Groups",
+                "type": "table",
+                "headers": [
+                    "Group",
+                    "Description"
+                ],
+                "rows": [
+                    [
+                        "web",
+                        "Has session, CSRF, cookies, encryption"
+                    ],
+                    [
+                        "api",
+                        "Throttling, stateless, CORS, JSON only"
+                    ]
+                ]
+            }
+        ]
+    }
+]
