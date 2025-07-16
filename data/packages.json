@@ -1,0 +1,161 @@
+[
+    {
+        "title": "Custom Packages",
+        "sections": [
+            {
+                "list": [
+                    "You're reusing logic across multiple Laravel projects.",
+                    "You want to decouple features like logging, notifications, API integrations, or custom validators.",
+                    "You want to share your logic with others (open-source or private packages)."
+                ],
+                "codes": [
+                    "# Create a new package\n\nmkdir -p packages/VendorName/PackageName\ncd packages/VendorName/PackageName",
+                    "# Create composer.json\n\n{\n  \"name\": \"vendorname/packagename\",\n  \"description\": \"My custom Laravel package\",\n  \"autoload\": {\n    \"psr-4\": {\n      \"VendorName\\PackageName\\\": \"src/\"\n    }\n  },\n  \"extra\": {\n    \"laravel\": {\n      \"providers\": [\n        \"VendorName\\PackageName\\PackageServiceProvider\"\n      ]\n    }\n  }\n}",
+                    "# Folder structure\n\npackages/\n└── VendorName/\n    └── PackageName/\n        ├── composer.json\n        └── src/\n            ├── PackageServiceProvider.php\n            └── ... (your logic)",
+                    "# Service Provider\n\nnamespace VendorName\\PackageName;\n\nuse Illuminate\\Support\\ServiceProvider;\n\nclass PackageServiceProvider extends ServiceProvider\n{\n    public function boot()\n    {\n        // Routes, views, migrations\n    }\n\n    public function register()\n    {\n        // Bind services to container\n    }\n}",
+                    "# Autoload in main project composer.json\n\n\"autoload\": {\n    \"psr-4\": {\n        \"App\\\": \"app/\",\n        \"VendorName\\PackageName\\\": \"packages/VendorName/PackageName/src/\"\n    }\n}",
+                    "composer dump-autoload"
+                ]
+            }
+        ]
+    },
+    {
+        "title": "Development & Utilities",
+        "sections": [
+            {
+                "table": {
+                    "headers": [
+                        "Package",
+                        "Purpose"
+                    ],
+                    "rows": [
+                        [
+                            "`barryvdh/laravel-debugbar`",
+                            "Debug toolbar for Laravel"
+                        ],
+                        [
+                            "`laravel/telescope`",
+                            "Laravel’s own debugging and insight tool"
+                        ],
+                        [
+                            "`nunomaduro/collision`",
+                            "Beautiful error reporting in Artisan console"
+                        ]
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "title": "Authentication & Authorization",
+        "sections": [
+            {
+                "table": {
+                    "headers": [
+                        "Package",
+                        "Purpose"
+                    ],
+                    "rows": [
+                        [
+                            "`laravel/sanctum`",
+                            "Lightweight API token authentication"
+                        ],
+                        [
+                            "`laravel/passport`",
+                            "OAuth2-based full API authentication"
+                        ],
+                        [
+                            "`spatie/laravel-permission`",
+                            "Role-based access control"
+                        ]
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "title": "File & Media Management",
+        "sections": [
+            {
+                "table": {
+                    "headers": [
+                        "Package",
+                        "Purpose"
+                    ],
+                    "rows": [
+                        [
+                            "`spatie/laravel-medialibrary`",
+                            "Associate files with Eloquent models"
+                        ],
+                        [
+                            "`intervention/image`",
+                            "Image handling and manipulation"
+                        ],
+                        [
+                            "`barryvdh/laravel-elfinder`",
+                            "File manager integration"
+                        ]
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "title": "Admin Panels / CRUD Builders",
+        "sections": [
+            {
+                "table": {
+                    "headers": [
+                        "Package",
+                        "Purpose"
+                    ],
+                    "rows": [
+                        [
+                            "`backpack/crud`",
+                            "Admin panel generator"
+                        ],
+                        [
+                            "`laravel/nova` (Paid)",
+                            "Official Laravel admin panel"
+                        ],
+                        [
+                            "`filament/filament`",
+                            "Modern TALL-stack admin panel"
+                        ],
+                        [
+                            "`orchid/platform`",
+                            "Admin dashboard generator"
+                        ]
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "title": "APIs and REST",
+        "sections": [
+            {
+                "table": {
+                    "headers": [
+                        "Package",
+                        "Purpose"
+                    ],
+                    "rows": [
+                        [
+                            "`fruitcake/laravel-cors`",
+                            "Handle Cross-Origin Resource Sharing (CORS)"
+                        ],
+                        [
+                            "`spatie/laravel-query-builder`",
+                            "Clean API filter/sort/search query handling"
+                        ],
+                        [
+                            "`darkaonline/l5-swagger`",
+                            "Swagger API documentation generator"
+                        ]
+                    ]
+                }
+            }
+        ]
+    }
+]

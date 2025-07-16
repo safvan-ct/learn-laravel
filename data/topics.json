@@ -28,5 +28,10 @@
         "title": "Notifications",
         "description": "Comprehensive overview of push notifications, emails, SMS, Redis, Pusher, Firebase, and other related real-time/event-based features in Laravel",
         "slug": "notifications"
+    },
+    {
+        "title": "Laravel packages",
+        "description": "Most popular and widely used Laravel packages that improve development speed, code quality, and feature set.",
+        "slug": "packages"
     }
 ]
