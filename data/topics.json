@@ -20,6 +20,11 @@
         "slug": "model-db"
     },
     {
+        "title": "Scheduling",
+        "description": "Learn about Console Commands, Cron Job Settings, Jobs, Queues, Scheduling in Laravel.",
+        "slug": "scheduling"
+    },
+    {
         "title": "Testing",
         "description": "Learn about testing in Laravel.",
         "slug": "testing"

@@ -1,0 +1,182 @@
+[
+    {
+        "title": "Artisan Console Commands",
+        "sections": [
+            {
+                "list": [
+                    "Run Laravel-specific tasks from the terminal (e.g., migrations, custom tasks).",
+                    "`php artisan &lt;command&gt;`",
+                    "`php artisan make:command SendReport`",
+                    "Located: `app/Console/Commands/SendReport.php`",
+                    "Register in: `app/Console/Kernel.php` or `bootstrap/app.php`"
+                ],
+                "codes": [
+                    "protected $signature = 'report:send';\npublic function handle() {\n    // Logic here\n}"
+                ]
+            }
+        ]
+    },
+    {
+        "title": "Scheduling Tasks",
+        "sections": [
+            {
+                "paragraph": "Register in: `app/Console/Kernel.php` or `bootstrap/app.php`",
+                "codes": [
+                    "protected function schedule(Schedule $schedule)\n{\n    $schedule->command('report:send')->dailyAt('14:00');\n}",
+                    "->everyMinute()\n->everyFiveMinutes()\n->hourly()\n->daily()\n->dailyAt('13:00')\n->weekly()\n->monthly()"
+                ]
+            }
+        ]
+    },
+    {
+        "title": "Cron Job (Linux Server Configuration)",
+        "sections": [
+            {
+                "list": [
+                    "This runs Laravel’s internal scheduler every minute.",
+                    "Laravel then decides which scheduled tasks to execute."
+                ],
+                "codes": [
+                    "* * * * * cd /path-to-your-project && php artisan schedule:run >> /dev/null 2>&1"
+                ]
+            }
+        ]
+    },
+    {
+        "title": "Jobs (Background Tasks)",
+        "sections": [
+            {
+                "heading": "4.1 What Are Jobs? & Creating a Job",
+                "paragraph": "Jobs in Laravel are units of work that can be dispatched to run synchronously or asynchronously (via `queues`). They are typically used for background tasks like:",
+                "list": [
+                    "Sending emails/SMS",
+                    "Send Push Notifications",
+                    "Processing images",
+                    "Generating reports",
+                    "Third-party API calls",
+                    "A Job class implements ShouldQueue to make it queueable"
+                ],
+                "codes": [
+                    "php artisan make:job ProcessPodcast",
+                    "class ProcessPodcast implements ShouldQueue{\n    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;\n\n    public function __construct(public Podcast $podcast) {}\n\n    public function handle(): void\n    {\n        // Process podcast\n    }\n}"
+                ]
+            },
+            {
+                "heading": "4.2 Dispatching Jobs",
+                "list": [
+                    "Clean up controller logic.",
+                    "Centralize validation and authorization"
+                ],
+                "codes": [
+                    "ProcessPodcast::dispatch($podcast);           // Push to default queue\nProcessPodcast::dispatchSync($podcast);       // Run immediately",
+                    "// Use ->onQueue('emails') or ->delay() for customization: \n ProcessPodcast::dispatch($podcast)->onQueue('processing')->delay(now()->addMinutes(2));"
+                ]
+            },
+            {
+                "heading": "4.3 Job Middleware",
+                "paragraph": "Middleware controls job execution logic, like preventing duplicates or adding rate-limiting.",
+                "codes": [
+                    "public function middleware()\n{\n    return [new WithoutOverlapping()];\n}",
+                    "public function middleware()\n{\n    return [new RateLimited('emails')];\n}"
+                ]
+            },
+            {
+                "heading": "4.4 Preventing Job Overlapping",
+                "paragraph": "Use `WithoutOverlapping` middleware.",
+                "codes": [
+                    "return [new WithoutOverlapping($this->user->id)];"
+                ]
+            },
+            {
+                "heading": "4.5 Failing & Retrying Jobs",
+                "paragraph": "Jobs throw exceptions to fail. Laravel stores them in failed_jobs table.",
+                "codes": [
+                    "#Table Setup:\n\nphp artisan queue:failed-table\nphp artisan migrate",
+                    "php artisan queue:retry 5  # Retry job with ID 5",
+                    "php artisan queue:forget 5  # Delete failed job with ID 5",
+                    "#Set tries and timeout on the job class:\n\npublic $tries = 5;\npublic $timeout = 120;"
+                ]
+            },
+            {
+                "heading": "4.6 Chained Jobs",
+                "paragraph": "Each runs only if the previous succeeds.",
+                "codes": [
+                    "ProcessPodcast::withChain([\n    new OptimizePodcast,\n    new ReleasePodcast,\n])->dispatch($podcast);"
+                ]
+            },
+            {
+                "heading": "4.7 Batch Jobs",
+                "paragraph": "Allows executing groups of jobs and tracking progress.",
+                "codes": [
+                    "use Illuminate\\Bus\\Batch;\nuse Illuminate\\Support\\Facades\\Bus;\n\nBus::batch([\n    new ImportCsv($file1),\n    new ImportCsv($file2),\n])->then(fn (Batch $batch) => Log::info('Done!'))\n  ->catch(fn (Batch $batch, Throwable $e) => Log::error($e->getMessage()))\n  ->dispatch();"
+                ]
+            },
+            {
+                "heading": "4.8 Job Events",
+                "paragraph": "Laravel fires lifecycle events like:",
+                "list": [
+                    "`JobProcessing`",
+                    "`JobProcessed`",
+                    "`JobFailed`",
+                    "Listen to them in `EventServiceProvider`."
+                ]
+            },
+            {
+                "heading": "4.9 Best Practices",
+                "list": [
+                    "Keep job classes small and focused (Single Responsibility).",
+                    "Avoid querying inside `handle()` if you can pass the data directly.",
+                    "Use DTOs if needed for large data payloads.",
+                    "Always handle exceptions `(try-catch)` `in handle()` when needed.",
+                    "Avoid tight loops inside jobs — split them up.",
+                    "Use `release()` to delay retry if needed:"
+                ],
+                "codes": [
+                    "$this->release(10);  // Retry after 10 seconds"
+                ]
+            }
+        ]
+    },
+    {
+        "title": "Queues",
+        "sections": [
+            {
+                "heading": "5.1 Queues Configuration",
+                "paragraph": "In config/queue.php, Laravel supports",
+                "list": [
+                    "`sync`: no queue, runs immediately (good for local/testing)",
+                    "`database`: stores jobs in DB (`jobs table`)",
+                    "`redis`: for high-performance queues",
+                    "`sqs`, `beanstalkd`, etc."
+                ],
+                "codes": [
+                    "#in .env:\nQUEUE_CONNECTION=database  # or redis, sqs, etc."
+                ]
+            },
+            {
+                "heading": "5.2 Queues Migration",
+                "paragraph": "Run `php artisan queue:table` to create the jobs table.",
+                "codes": [
+                    "php artisan queue:table\nphp artisan migrate"
+                ]
+            },
+            {
+                "heading": "5.3 Queue Worker",
+                "paragraph": "Run `php artisan queue:work` to start the queue worker.",
+                "codes": [
+                    "php artisan queue:work",
+                    "php artisan queue:restart",
+                    "php artisan queue:work --queue=emails",
+                    "#Use --queue, --tries, --timeout\n\nphp artisan queue:work --queue=emails --tries=3 --timeout=60"
+                ]
+            },
+            {
+                "heading": "5.4 Supervisor for Daemon Workers",
+                "paragraph": "For production (Linux), use Supervisor to keep `queue:work` running persistently.",
+                "codes": [
+                    "[program:laravel-worker]\nprocess_name=%(program_name)s_%(process_num)02d\ncommand=php /path/to/artisan queue:work redis --sleep=3 --tries=3 --timeout=90\nnumprocs=3\nautostart=true\nautorestart=true"
+                ]
+            }
+        ]
+    }
+]
