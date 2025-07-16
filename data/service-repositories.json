@@ -1,0 +1,130 @@
+[
+    {
+        "title": "Service Container",
+        "sections": [
+            {
+                "paragraph": "The Service Container is Laravel's Dependency Injection (DI) container. It resolves and injects classes (like services, repositories) automatically.",
+                "list": [
+                    "Manages class dependencies.",
+                    "Binds interfaces to implementations.",
+                    "Resolves dependencies recursively.",
+                    "You often use it via: `app(SomeClass::class);`"
+                ],
+                "codes": [
+                    "app()->bind(UserRepositoryInterface::class, UserRepository::class);"
+                ]
+            }
+        ]
+    },
+    {
+        "title": "Service Provider",
+        "sections": [
+            {
+                "paragraph": "A Service Provider is where bindings and bootstrapping for services or classes are registered into the service container.",
+                "list": [
+                    "Located in `app/Providers`",
+                    "Extends `Illuminate\\Support\\ServiceProvider`",
+                    "`register()` binds things in the service container.",
+                    "`boot()` runs logic after all services are registered."
+                ],
+                "codes": [
+                    "php artisan make:provider RepositoryServiceProvider",
+                    "public function register()\n{\n    $this->app->bind(UserRepositoryInterface::class, UserRepository::class);\n}"
+                ]
+            }
+        ]
+    },
+    {
+        "title": "Interface",
+        "sections": [
+            {
+                "paragraph": "An interface defines a contract that classes must follow.",
+                "list": [
+                    "Promotes decoupling.",
+                    "Enables swapping implementations easily.",
+                    "Essential in Repository Pattern and testing (mocking)."
+                ],
+                "codes": [
+                    "php artisan make:interface UserRepositoryInterface",
+                    "interface UserRepositoryInterface {\n    public function all();\n    public function find($id);\n}"
+                ]
+            }
+        ]
+    },
+    {
+        "title": "Repository",
+        "sections": [
+            {
+                "paragraph": "A Repository abstracts your database logic (usually Eloquent). It hides model-specific queries from controllers/services.",
+                "list": [
+                    "Implements the `interface`.",
+                    "Decouples data access layer.",
+                    "Easy to test/mock."
+                ],
+                "codes": [
+                    "php artisan make:class UserRepository --interface UserRepositoryInterface",
+                    "class UserRepository implements UserRepositoryInterface {\n    public function all() {\n        return User::all();\n    }\n\n    public function find($id) {\n        return User::findOrFail($id);\n    }\n}"
+                ]
+            }
+        ]
+    },
+    {
+        "title": "Service Class",
+        "sections": [
+            {
+                "paragraph": "A custom class that contains business logic. It’s where your app logic goes, instead of bloating controllers.",
+                "codes": [
+                    "class OrderService {\n    public function placeOrder(array $data) {\n        // validate, process, save, etc.\n    }\n}"
+                ]
+            }
+        ]
+    },
+    {
+        "title": "Putting It All Together (Flow Example)",
+        "sections": [
+            {
+                "paragraph": "Request ➝ Controller ➝ Service ➝ Repository ➝ Model",
+                "codes": [
+                    "app/\n├── Http/Controllers/OrderController.php\n├── Services/OrderService.php\n├── Repositories/OrderRepositoryInterface.php\n├── Repositories/OrderRepository.php\n├── Providers/RepositoryServiceProvider.php",
+                    "//Service Provider\npublic function register()\n{\n    $this->app->bind(OrderRepositoryInterface::class, OrderRepository::class);\n}",
+                    "public function store(Request $request, OrderService $service) {\n    $order = $service->placeOrder($request->all());\n    return response()->json($order);\n}"
+                ]
+            }
+        ]
+    },
+    {
+        "title": "Advantages of Using This Structure",
+        "sections": [
+            {
+                "table": {
+                    "headers": [
+                        "Benefit",
+                        "Description"
+                    ],
+                    "rows": [
+                        [
+                            "🔁 Reusability",
+                            "Logic is centralized in services."
+                        ],
+                        [
+                            "🔄 Replaceability",
+                            "Interfaces allow easy switching of implementations."
+                        ],
+                        [
+                            "🧪 Testability",
+                            "You can mock repositories/services in tests."
+                        ],
+                        [
+                            "💡 Clean Code",
+                            "Controllers are thin and readable."
+                        ],
+                        [
+                            "🔐 Abstraction",
+                            "UI/Controllers are decoupled from the data layer."
+                        ]
+                    ]
+                }
+            }
+        ]
+    }
+]
