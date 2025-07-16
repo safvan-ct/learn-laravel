@@ -31,7 +31,7 @@ searchInput.addEventListener("keyup", function () {
 	const query = this.value.toLowerCase();
 
 	document
-		.querySelectorAll("#eloquentAccordion .accordion-item")
+		.querySelectorAll("#Accordion .accordion-item")
 		.forEach((item) => {
 			const button = item.querySelector("button.accordion-button");
 			const heading = item.querySelector("h6");

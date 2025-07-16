@@ -1,0 +1,193 @@
+[
+    {
+        "title": "Controller <span class=\"text-capitalize ms-1\"> (Normal Controller)</span>",
+        "sections": [
+            {
+                "list": [
+                    "Handles logic for individual routes.",
+                    "Usually tied to views (Blade) for web applications.",
+                    "Ideal for non-RESTful logic.",
+                    "Can return views or JSON.",
+                    "Use dependency injection for cleaner logic."
+                ],
+                "codes": [
+                    "php artisan make:controller UserController",
+                    "class UserController extends Controller {\n    public function index() {\n        return view('users.index');\n    }\n\n    public function store(Request $request) {\n        // validate & save user\n    }\n}"
+                ]
+            }
+        ]
+    },
+    {
+        "title": "RESOURCE CONTROLLER",
+        "sections": [
+            {
+                "paragraph": "Follows RESTful conventions with 7 predefined methods.",
+                "codes": [
+                    "php artisan make:controller UserController --resource"
+                ],
+                "table": {
+                    "headers": [
+                        "Method",
+                        "Route",
+                        "Purpose"
+                    ],
+                    "rows": [
+                        [
+                            "`index`",
+                            "GET /users",
+                            "List all"
+                        ],
+                        [
+                            "`create`",
+                            "GET /users/create",
+                            "Show create form"
+                        ],
+                        [
+                            "`store`",
+                            "POST /users",
+                            "Store new"
+                        ],
+                        [
+                            "`show`",
+                            "GET /users/{id}",
+                            "Show one"
+                        ],
+                        [
+                            "`edit`",
+                            "GET /users/{id}/edit",
+                            "Show edit form"
+                        ],
+                        [
+                            "`update`",
+                            "PUT/PATCH /users/{id}",
+                            "Update one"
+                        ],
+                        [
+                            "`destroy`",
+                            "DELETE /users/{id}",
+                            "Delete one"
+                        ]
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "title": "API RESOURCE CONTROLLER",
+        "sections": [
+            {
+                "paragraph": "Same as resource controller but for APIs (stateless).",
+                "codes": [
+                    "php artisan make:controller Api\\UserController --resource --api",
+                    "Route::apiResource('products', Api\\ProductController::class);"
+                ],
+                "table": {
+                    "headers": [
+                        "Method",
+                        "Route"
+                    ],
+                    "rows": [
+                        [
+                            "`index`",
+                            "GET /api/users"
+                        ],
+                        [
+                            "`store`",
+                            "POST /api/users"
+                        ],
+                        [
+                            "`show`",
+                            "GET /api/users/{id}"
+                        ],
+                        [
+                            "`update`",
+                            "PUT/PATCH /api/users/{id}"
+                        ],
+                        [
+                            "`destroy`",
+                            "DELETE /api/users/{id}"
+                        ]
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "title": "REQUEST & VALIDATION",
+        "sections": [
+            {
+                "heading": "4.1 Validate inside controller",
+                "paragraph": "`$request->validated()`<br>this returns only validated data.",
+                "codes": [
+                    "$request->validate([\n    'name' => 'required|string|max:255',\n    'email' => 'required|email|unique:users'\n]);"
+                ]
+            },
+            {
+                "heading": "4.2 CUSTOM FORM REQUEST",
+                "list": [
+                    "Clean up controller logic.",
+                    "Centralize validation and authorization"
+                ],
+                "codes": [
+                    "php artisan make:request StoreUserRequest",
+                    "public function authorize(): bool {\n    return true; // or use auth()->check(), policy, etc.\n}\n\npublic function rules(): array {\n    return [\n        'name' => 'required|string',\n        'email' => 'required|email|unique:users',\n    ];\n}",
+                    "public function store(StoreUserRequest $request) {\n    $data = $request->validated();\n    User::create($data);\n}"
+                ]
+            },
+            {
+                "heading": "4.3 AUTHORIZATION IN FORM REQUEST",
+                "paragraph": "Use `authorize()`<br>If it returns false, Laravel automatically returns a 403 Unauthorized response.",
+                "codes": [
+                    "public function authorize(): bool {\n    return auth()->user()->isAdmin(); // example\n}"
+                ]
+            },
+            {
+                "heading": "4.4 COMMON FORM REQUEST RULES",
+                "table": {
+                    "headers": [
+                        "Rule",
+                        "Meaning"
+                    ],
+                    "rows": [
+                        [
+                            "`required`",
+                            "Must be present"
+                        ],
+                        [
+                            "`email`",
+                            "Must be a valid email"
+                        ],
+                        [
+                            "`string`",
+                            "Must be a string"
+                        ],
+                        [
+                            "`max:255`",
+                            "Max 255 characters"
+                        ],
+                        [
+                            "`min:3`",
+                            "Minimum 3 characters"
+                        ],
+                        [
+                            "`unique:table`",
+                            "Value must be unique in DB"
+                        ],
+                        [
+                            "`exists:table,id`",
+                            "Value must exist in DB"
+                        ],
+                        [
+                            "`nullable`",
+                            "Field can be empty"
+                        ],
+                        [
+                            "`confirmed`",
+                            "Field must have a matching `*_confirmation`"
+                        ]
+                    ]
+                }
+            }
+        ]
+    }
+]
