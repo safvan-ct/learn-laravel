@@ -1,0 +1,105 @@
+[
+    {
+        "title": "Sending Emails",
+        "sections": [
+            {
+                "paragraph": "Use: Notifications, verification, invoices, alerts",
+                "codes": [
+                    "# in .env:\nMAIL_MAILER=smtp\nMAIL_HOST=smtp.mailtrap.io\nMAIL_PORT=2525\nMAIL_USERNAME=your_username\nMAIL_PASSWORD=your_password\nMAIL_ENCRYPTION=tls\nMAIL_FROM_ADDRESS=hello@example.com\nMAIL_FROM_NAME='App Name'",
+                    "php artisan make:mail WelcomeMail",
+                    "use Illuminate\\Support\\Facades\\Mail;\nuse App\\Mail\\WelcomeMail;\n\nMail::to($user->email)->send(new WelcomeMail($user));"
+                ]
+            }
+        ]
+    },
+    {
+        "title": "Sending SMS",
+        "sections": [
+            {
+                "paragraph": "Use: OTP, alerts, transactional messages",
+                "list": [
+                    "Twilio",
+                    "Vonage/Nexmo",
+                    "[Msg91, Textlocal (India)]",
+                    "Can also abstract this via an interface-based SmsServiceInterface + TwilioSmsService implementation."
+                ],
+                "codes": [
+                    "# in .env:\nTWILIO_SID=your_twilio_sid\nTWILIO_TOKEN=your_twilio_token\nTWILIO_FROM=your_twilio_number",
+                    "composer require twilio/sdk",
+                    "use Twilio\\Rest\\Client;\n\n$twilio = new Client($sid, $token);\n$twilio->messages->create($phoneNumber, [\n    'from' => $twilioFrom,\n    'body' => 'Your OTP is 123456'\n]);"
+                ]
+            }
+        ]
+    },
+    {
+        "title": "Push Notifications",
+        "sections": [
+            {
+                "heading": "2.1 Firebase Cloud Messaging (FCM)",
+                "codes": [
+                    "composer require kreait/firebase-php",
+                    "use Kreait\\Firebase\\Factory;\n\n$factory = (new Factory)->withServiceAccount('path/to/firebase.json');\n$messaging = $factory->createMessaging();\n\n$message = CloudMessage::withTarget('token', $deviceToken)\n    ->withNotification(['title' => 'Hello', 'body' => 'You have a new message!']);\n\n$messaging->send($message);"
+                ]
+            },
+            {
+                "heading": "2.2 OneSignal (Easy to use for web + mobile)",
+                "codes": [
+                    "composer require berkayk/onesignal-laravel",
+                    "use OneSignal\\OneSignalClient;\n\n$onesignal = new OneSignalClient('your_app_id', 'your_rest_api_key');\n\n$onesignal->sendNotificationToAll('Hello, world!');"
+                ]
+            },
+            {
+                "heading": "2.3 Laravel Notifications (Unified for Email, SMS, FCM, Database, etc.)",
+                "codes": [
+                    "php artisan make:notification InvoicePaid",
+                    "public function via($notifiable)\n{\n    return ['mail', 'database', 'nexmo', 'fcm'];\n}",
+                    "$user->notify(new InvoicePaid($invoice));"
+                ]
+            }
+        ]
+    },
+    {
+        "title": "Redis (for Queues, Caching, Pub/Sub, Real-time)",
+        "sections": [
+            {
+                "heading": "3.1 OneSignal",
+                "list": [
+                    "Caching",
+                    "Broadcasting",
+                    "Queues",
+                    "Real-time pub/sub"
+                ],
+                "codes": [
+                    "composer require predis/predis",
+                    "CACHE_DRIVER=redis\nQUEUE_CONNECTION=redis\nBROADCAST_DRIVER=redis"
+                ]
+            }
+        ]
+    },
+    {
+        "title": "Pusher (for WebSocket-based real-time communication)",
+        "sections": [
+            {
+                "paragraph": "Use: Real-time chat, live feed, notifications, Laravel Echo",
+                "codes": [
+                    "composer require pusher/pusher-php-server",
+                    "BROADCAST_DRIVER=pusher\nPUSHER_APP_ID=xxxx\nPUSHER_APP_KEY=xxxx\nPUSHER_APP_SECRET=xxxx\nPUSHER_APP_CLUSTER=ap2",
+                    "npm install --save laravel-echo pusher-js",
+                    "import Echo from 'laravel-echo';\n\nwindow.Pusher = require('pusher-js');\nwindow.Echo = new Echo({\n    broadcaster: 'pusher',\n    key: 'your-key',\n    cluster: 'ap2',\n    forceTLS: true\n});\n\nwindow.Echo.channel('chat')\n    .listen('MessageSent', (e) => {\n        console.log(e.message);\n    });"
+                ]
+            }
+        ]
+    },
+    {
+        "title": "Events and Listeners",
+        "sections": [
+            {
+                "paragraph": "Use Event-Driven design to trigger actions (email, sms, fcm) on specific events.",
+                "codes": [
+                    "php artisan make:event OrderPlaced\nphp artisan make:listener SendOrderNotification",
+                    "event(new OrderPlaced($order));"
+                ]
+            }
+        ]
+    }
+]

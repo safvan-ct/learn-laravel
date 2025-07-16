@@ -25,8 +25,8 @@
         "slug": "scheduling"
     },
     {
-        "title": "Testing",
-        "description": "Learn about testing in Laravel.",
-        "slug": "testing"
+        "title": "Notifications",
+        "description": "Comprehensive overview of push notifications, emails, SMS, Redis, Pusher, Firebase, and other related real-time/event-based features in Laravel",
+        "slug": "notifications"
     }
 ]
