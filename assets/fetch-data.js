@@ -2,13 +2,16 @@ fetch(FILE_PATH)
 	.then((res) => res.json())
 	.then((data) => {
 		const accordion = document.getElementById("Accordion");
+		const isQa = typeof QA !== "undefined" && !!QA;
 
 		data.forEach((topic, index) => {
 			const topicId = `collapse${index}`;
 
 			let sectionsHtml = topic.sections
 				.map((section) => {
-					let heading = section.heading ? `<h6 class="text-uppercase">${section.heading}</h6>` : "";
+					let heading = section.heading
+						? `<h6 class="text-uppercase">${section.heading}</h6>`
+						: "";
 					let para = section.paragraph
 						? `<p>${section.paragraph.replace(
 								/`(.*?)`/g,
@@ -63,18 +66,28 @@ fetch(FILE_PATH)
 				})
 				.join("");
 
+			const id = index >= 9 ? index + 1 : `0${index + 1}`;
+			const icon = isQa
+				? ` <i class="fas fa-question ms-2 text-primary"></i>`
+				: "";
+			const header = `<i>${id}</i>&nbsp;- ${topic.title}${icon}`;
+			const collapsed = isQa ? "" : "collapsed";
+			const show = isQa ? "show" : "";
+			const toggle = isQa
+				? ""
+				: `data-bs-toggle="collapse" data-bs-target="#${topicId}"`;
+
 			accordion.insertAdjacentHTML(
 				"beforeend",
 				`<div class="accordion-item">
-                    <h2 class="accordion-header" id="heading${index}">
-                        <button class="accordion-button collapsed text-uppercase fw-bold" type="button" data-bs-toggle="collapse"
-                        data-bs-target="#${topicId}">
-                        <i>0${index + 1}</i>&nbsp;- ${topic.title}
+                    <h2 class="accordion-header" id="heading${id}">
+                        <button class="accordion-button ${collapsed} text-uppercase fw-bold" type="button" ${toggle}>
+							${header}
                         </button>
                     </h2>
-                    <div id="${topicId}" class="accordion-collapse collapse" data-bs-parent="#Accordion">
+                    <div id="${topicId}" class="accordion-collapse collapse ${show}" data-bs-parent="#Accordion">
                         <div class="accordion-body">
-                        ${sectionsHtml}
+                        	${sectionsHtml}
                         </div>
                     </div>
                 </div>`

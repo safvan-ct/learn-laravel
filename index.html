@@ -2,32 +2,33 @@
 <html lang="en">
 
 <head>
-    <title>Learn Laravel</title>
+  <title>Learn Laravel</title>
 </head>
 
 <body class="bg-light text-dark">
-    <!-- Navbar -->
-    <div id="navbar-container"></div>
+  <!-- Navbar -->
+  <div id="navbar-container"></div>
 
-    <div class="container py-4">
-        <h1 class="text-center mb-5"><i class="fas fa-book-open text-primary me-2"></i> Learn Laravel</h1>
+  <div class="container py-4">
+    <h1 class="text-center mb-5"><i class="fas fa-book-open text-primary me-2"></i> Learn Laravel</h1>
 
-        <div class="row">
-            <div class="row" id="topic-cards-container"></div>
-        </div>
+    <div class="row">
+      <div class="row" id="topic-cards-container"></div>
     </div>
+  </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/script.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/script.js"></script>
 
-    <script>
-        fetch("data/topics.json")
-            .then(response => response.json())
-            .then(topics => {
-                const container = document.getElementById("topic-cards-container");
+  <script>
+    fetch("data/topics.json")
+      .then(response => response.json())
+      .then(topics => {
+        const container = document.getElementById("topic-cards-container");
 
-                topics.forEach(topic => {
-                    const card = `
+        topics.forEach(topic => {
+          let qa = topic.qa ? `<a href="${topic.slug}-qa.html" class="card-link">Q&A</a>` : "";
+          const card = `
           <div class="col-md-3 mb-2">
             <div class="card h-100">
               <div class="card-body d-flex flex-column">
@@ -35,17 +36,17 @@
                 <p class="card-text">${topic.description}</p>
                 <div class="mt-auto">
                   <a href="${topic.slug}.html" class="card-link">Learn</a>
-                  <a href="${topic.slug}-qa.html" class="card-link">Q&A</a>
+                  ${qa}
                 </div>
               </div>
             </div>
           </div>
         `;
-                    container.insertAdjacentHTML("beforeend", card);
-                });
-            })
-            .catch(error => console.error("Error loading topics:", error));
-    </script>
+          container.insertAdjacentHTML("beforeend", card);
+        });
+      })
+      .catch(error => console.error("Error loading topics:", error));
+  </script>
 </body>
 
 </html>

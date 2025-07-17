@@ -2,7 +2,8 @@
     {
         "title": "Routes & Middleware",
         "description": "Learn about routes and middleware in Laravel.",
-        "slug": "routes-middleware"
+        "slug": "routes-middleware",
+        "qa": true
     },
     {
         "title": "Controllers & Requests",
@@ -17,7 +18,8 @@
     {
         "title": "Model & DB",
         "description": "Learn about models and databases in Laravel.",
-        "slug": "model-db"
+        "slug": "model-db",
+        "qa": true
     },
     {
         "title": "Scheduling",
@@ -33,5 +35,10 @@
         "title": "Laravel packages",
         "description": "Most popular and widely used Laravel packages that improve development speed, code quality, and feature set.",
         "slug": "packages"
+    },
+    {
+        "title": "Question & Answers",
+        "description": "Get answers to frequently asked questions about Laravel.",
+        "slug": "qa"
     }
 ]

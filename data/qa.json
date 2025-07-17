@@ -1,0 +1,238 @@
+[
+    {
+        "title": "What is the Service Container, Service Provider, Interface, and Dependency Injection in Laravel",
+        "sections": [
+            {
+                "list": [
+                    "Service Container is Laravel’s powerful IoC (Inversion of Control) container for managing class dependencies.",
+                    "Service Provider is where we bind classes/services into the container.",
+                    "An interface defines a contract that classes must follow.",
+                    "Dependency Injection allows Laravel to resolve and inject dependencies automatically.",
+                    "Laravel handles it through the container when you type-hint the dependency."
+                ]
+            }
+        ]
+    },
+    {
+        "title": "What is the Repository Pattern and its use",
+        "sections": [
+            {
+                "paragraph": "Repository abstracts the data layer. It helps keep controllers/services clean and makes testing easier."
+            }
+        ]
+    },
+    {
+        "title": "What are Facades in Laravel",
+        "sections": [
+            {
+                "paragraph": "A facade is just a shortcut to access a service from Laravel’s Service Container"
+            }
+        ]
+    },
+    {
+        "title": "What are Middleware and Policies",
+        "sections": [
+            {
+                "list": [
+                    "Middleware filters HTTP requests (auth, CORS, etc.)",
+                    "Policies are for authorization logic related to models"
+                ]
+            }
+        ]
+    },
+    {
+        "title": "What is Route Caching",
+        "sections": [
+            {
+                "paragraph": "It speeds up route registration by caching the routes.",
+                "codes": [
+                    "php artisan route:cache\nphp artisan route:clear"
+                ]
+            }
+        ]
+    },
+    {
+        "title": "What is Eloquent and Query Builder",
+        "sections": [
+            {
+                "list": [
+                    "Eloquent: Laravel’s ORM (Object-Relational Mapping).",
+                    "Query Builder: Fluent, chainable SQL query generator."
+                ]
+            }
+        ]
+    },
+    {
+        "title": "What are Polymorphic Relationships",
+        "sections": [
+            {
+                "paragraph": "Used when multiple models (e.g., Post, Video) share a relation like Comments."
+            }
+        ]
+    },
+    {
+        "title": "What are Accessors and Mutators? And how to handle N+1",
+        "sections": [
+            {
+                "list": [
+                    "Accessor: Modify data when getting",
+                    "Mutator: Modify data when setting",
+                    "N+1 Problem Solution: Eager loading `with()`"
+                ]
+            }
+        ]
+    },
+    {
+        "title": "What is SQL Injection and Laravel's Protection",
+        "sections": [
+            {
+                "paragraph": "SQL Injection is a security vulnerability where raw SQL is exploited",
+                "list": [
+                    "Laravel is protected by default: By using elequent model or use bindings.",
+                    "Use DB facade methods for raw queries."
+                ]
+            }
+        ]
+    },
+    {
+        "title": "How does Laravel Auth Work",
+        "sections": [
+            {
+                "paragraph": "Auth uses guards and providers",
+                "list": [
+                    "Guard: A collection of user providers",
+                    "Provider: A collection of user models"
+                ]
+            }
+        ]
+    },
+    {
+        "title": "What is Role-Based Access Control (RBAC)",
+        "sections": [
+            {
+                "paragraph": "RBAC controls access based on roles."
+            }
+        ]
+    },
+    {
+        "title": "Passport vs Sanctum",
+        "sections": [
+            {
+                "table": {
+                    "headers": [
+                        "Feature",
+                        "Passport",
+                        "Sanctum"
+                    ],
+                    "rows": [
+                        [
+                            "Auth Type",
+                            "OAuth2",
+                            "Token/session-based"
+                        ],
+                        [
+                            "Use Case",
+                            "API for 3rd party",
+                            "SPA/mobile/internal"
+                        ],
+                        [
+                            "Complexity",
+                            "High",
+                            "Low (lightweight)"
+                        ]
+                    ]
+                }
+            }
+        ]
+    },
+    {
+        "title": "How to Handle Background Tasks",
+        "sections": [
+            {
+                "paragraph": "Use Queue, Job, and Event"
+            }
+        ]
+    },
+    {
+        "title": "Caching & Performance Optimization",
+        "sections": [
+            {
+                "list": [
+                    "Use `route:cache`, `config:cache`",
+                    "Database query caching via `Cache::remember()`",
+                    "View cache: `php artisan view:cache`",
+                    "Use indexes in DB",
+                    "Optimize images/assets"
+                ]
+            }
+        ]
+    },
+    {
+        "title": "How to Debug a Slow Laravel App",
+        "sections": [
+            {
+                "list": [
+                    "Use Laravel Telescope",
+                    "Use clockwork or Xdebug",
+                    "Log slow queries via `DB::listen()`",
+                    "Check N+1 queries",
+                    "Check Unindexed columns",
+                    "Check Large payloads",
+                    "Check View composers/middleware load"
+                ]
+            }
+        ]
+    },
+    {
+        "title": "How to Migrate a Large Database Without Downtime",
+        "sections": [
+            {
+                "list": [
+                    "Use zero-downtime deployments",
+                    "Use `--step` in migration",
+                    "Add columns with defaults/nulls first, then backfill",
+                    "Use tools like Laravel Shift Blueprints"
+                ]
+            }
+        ]
+    },
+    {
+        "title": "High Traffic Handling in Laravel App",
+        "sections": [
+            {
+                "list": [
+                    "Use queues and workers",
+                    "Use Redis for caching/session",
+                    "Rate limit APIs",
+                    "Use CDNs for static content",
+                    "Scale using load balancers and horizontal scaling"
+                ]
+            }
+        ]
+    },
+    {
+        "title": "Ensuring Data Consistency in Multi-Server Setup",
+        "sections": [
+            {
+                "list": [
+                    "Use centralized DB (or DB replication with master-write)",
+                    "Atomic transactions `(DB::transaction)`",
+                    "Queue with Redis to share jobs",
+                    "Use Redis-based sessions/cache"
+                ]
+            }
+        ]
+    },
+    {
+        "title": "What are Local, Public, and Storage Directories",
+        "sections": [
+            {
+                "list": [
+                    "local/private: For storing sensitive data",
+                    "public: For storing public assets",
+                    "storage: Laravel internal files (logs, compiled views)"
+                ]
+            }
+        ]
+    }
+]

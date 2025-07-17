@@ -52,6 +52,14 @@
         ]
     },
     {
+        "title": "Dependency injection",
+        "sections": [
+            {
+                "paragraph": " `class` dependencies are `injected` into the class via the constructor or, in some cases, `setter` methods."
+            }
+        ]
+    },
+    {
         "title": "Repository",
         "sections": [
             {
